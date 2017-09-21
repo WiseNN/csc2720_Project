@@ -19,9 +19,9 @@
 
 3. **Nommel Djedjero**
 
-    LinkedIn: 
+    LinkedIn: [https://www.linkedin.com/in/nommeldjedjero/](https://www.linkedin.com/in/nommeldjedjero/)
 
-    Github: 
+    Github: [https://github.com/NommelDjedjero](https://github.com/NommelDjedjero)
 
     Website: 
 
