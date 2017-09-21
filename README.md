@@ -3,46 +3,51 @@
 ### Members:
 1. **Adobah** 
 
-Github:
+    Github:
 
-LinkedIn: 
+    LinkedIn: 
 
-Website: 
+    Website: 
+
 2. **Brandon**
 
-LinkedIn: 
+    LinkedIn: 
 
-Github: 
+    Github: 
 
-Website: 
+    Website: 
+
 3. **Nommel Djedjero**
 
-LinkedIn: 
+    LinkedIn: 
 
-Github: 
+    Github: 
 
-Website: 
+    Website: 
+
 4. **Taslim Dosunmu**
 
-LinkedIn: [https://www.linkedin.com/in/taslimdosunmu/](https://www.linkedin.com/in/taslimdosunmu/)
+    LinkedIn: [https://www.linkedin.com/in/taslimdosunmu/](https://www.linkedin.com/in/taslimdosunmu/)
 
-Github: [github.com/JayDosunmu](github.com/JayDosunmu)  
+    Github: [github.com/JayDosunmu](github.com/JayDosunmu)  
 
-Website: 
+    Website: 
+
 5. **Hasan Raza**
 
-LinkedIn: 
+    LinkedIn: 
 
-Github: 
+    Github: 
 
-Website: 
+    Website: 
+
 6. **Norris Wise**
 
-LinkedIn: 
+    LinkedIn: 
 
-Github: 
+    Github: 
 
-Website: 
+    Website: 
 
 ## Project:
 Undecided
