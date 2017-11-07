@@ -1,0 +1,31 @@
+{
+  "name": "chatappproject",
+  "version": "1.0.0",
+  "description": "web based chat applications with extra features such as: voice recognition and message encoding",
+  "main": "src/app.js",
+  "scripts": {
+    "test": "test-run",
+    "start": "node src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WiseNN/csc2720_Project.git"
+  },
+  "keywords": [
+    "chatAppProject",
+    "chat",
+    "project"
+  ],
+  "author": "Norris Wise Jr, Taslim Dosunmo, Nommel Djedjero, Jeff Adobah, Brandon Harris",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/WiseNN/csc2720_Project/issues"
+  },
+  "homepage": "https://github.com/WiseNN/csc2720_Project#readme",
+  "dependencies": {
+    "express": "^4.16.2"
+  },
+  "devDependencies": {
+    "nodemon": "^1.12.1"
+  }
+}
