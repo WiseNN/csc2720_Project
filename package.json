@@ -29,5 +29,8 @@
     "mongodb": "^2.2.33",
     "mongoose": "^4.12.5"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1"
+  }
 }
