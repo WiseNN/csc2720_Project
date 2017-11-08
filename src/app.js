@@ -13,19 +13,23 @@ const port = process.env.PORT || 3300;
 
 
 //SSL support
+/*
 https.createServer({
 
 	key: fs.readFileSync('key.pem'),
 	cert: fs.readFileSync('cert.pem')
 }, app).listen(port);;
+*/
+
 
 //unsecure support
-// app.listen(port);
+app.listen(port);
 
 console.log("listening on port: "+port+"...")
 
 app.get('/', function(req,res){
-	res.send("landing");
+
+	res.send("	LANDING PAGE, \"Hello\" \"World\" ");
 });
 // router.get('/home', function(){});
 
