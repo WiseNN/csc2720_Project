@@ -8,13 +8,22 @@ import routes from './api/routes';
 
 const app = express();
 
-const port = 5000;
+const port = process.env.port || 3300;
 
 
+
+//SSL support
 https.createServer({
+
 	key: fs.readFileSync('key.pem'),
 	cert: fs.readFileSync('cert.pem')
-}, app).listen(port);
+}, app).listen(port);;
+
+//unsecure support
+// app.listen(port);
+
+console.log("listening on port: "+port+"...")
+
 app.get('/', function(req,res){
 	res.send("landing");
 });
