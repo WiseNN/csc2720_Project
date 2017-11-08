@@ -1,6 +1,8 @@
 
 // const express = require('express');
+import fs from 'fs';
 import express from 'express';
+import https from 'https';
 import routes from './api/routes';
 
 
@@ -9,7 +11,10 @@ const app = express();
 const port = 3300;
 
 
-
+https.createServer({
+	key: fs.readFileSync('key.pem'),
+	cert: fs.readFileSync('cert.pem')
+}, app).listen(port);
 app.get('/', function(req,res){
 	res.send("landing");
 });
@@ -24,8 +29,8 @@ app.use('/api', routes);
 // });
 
 
-app.listen(port, function(){ console.log("listening on port: "+port);	
-} );
+// app.listen(port, function(){ console.log("listening on port: "+port);	
+// } );
 
 
 
