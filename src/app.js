@@ -7,7 +7,7 @@ import routes from './api/routes';
 
 
 const app = express();
-
+//look for heroku's port or use local port 
 const port = process.env.PORT || 3300;
 
 
