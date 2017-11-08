@@ -4,7 +4,7 @@ import fs from 'fs';
 import express from 'express';
 import https from 'https';
 import routes from './api/routes';
-
+import db from './mongoDb/db';
 
 const app = express();
 //look for heroku's port or use local port 
