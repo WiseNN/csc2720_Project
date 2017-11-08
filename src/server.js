@@ -15,6 +15,6 @@ require('babel-register')({presets: ['es2015']});
 // };
 
 
-console.log("loadd extensions");
+console.log("loaded extensions");
 
 require('./app.js');
