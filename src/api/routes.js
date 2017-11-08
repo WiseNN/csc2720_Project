@@ -32,7 +32,7 @@ router.get("/user/:userId", (req,res) => {
 	privateChat :{
 			userId :{
 				recipientId :{
-						messages :{
+						messages : uid(ObjectID_Key) : {
 							date : `_DATE`,
 							time : _TIME,
 							sender : _recipientId or _userId,
@@ -57,6 +57,8 @@ router.get("/privateChat/:userId/:recipient/messages", function(req,res){
 	res.send(message);
 
 });
+
+
 
 //function will be moved to a Class called Utilities folder
 const getDateAndTime = () => {
