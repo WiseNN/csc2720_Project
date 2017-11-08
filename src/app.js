@@ -8,7 +8,7 @@ import routes from './api/routes';
 
 const app = express();
 
-const port = process.env.port || 3300;
+const port = process.env.PORT || 3300;
 
 
 
