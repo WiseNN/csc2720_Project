@@ -17,11 +17,12 @@ var router = express.Router();
 */
 
 
-router.get("/user/:userId", (req,res) => {
+router.get("/users/:userId", (req,res) => {
 	console.log("params: "+JSON.stringify(req.params));
 	res.send({
-		users : req.params.userId,
-		exists: true
+		user : req.params.userId,
+		exists: true,
+		message: "This is used to validate users"
 	});
 });
 
@@ -29,17 +30,25 @@ router.get("/user/:userId", (req,res) => {
 
 
 
-router.get("/privateChat/:userId/:recipient/messages", function(req,res){
+router.get("/privateChat/:userId/:recipientId/:message", function(req,res){
 	
 	
 	console.log("UTIL: "+JSON.stringify(myUtil.getDateAndTime()));
+	console.log("params: "+req.message);
 	const dateTime = myUtil.getDateAndTime();
 
-	const message = {
+	var myMsg = {
 		date : dateTime.date,
-		time : dateTime.time
+		userId : req.params.userId,
+	recipientId : req.params.recipeintId,
+	text: req.params.message,
+		time : dateTime.time,
+		
 	};
-	res.send(message);
+
+	console.log("mssg: "+JSON.stringify(myMsg));
+	
+	res.send(myMsg);
 
 });
 
