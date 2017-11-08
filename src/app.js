@@ -8,7 +8,7 @@ import routes from './api/routes';
 
 const app = express();
 
-const port = 3300;
+const port = 5000;
 
 
 https.createServer({
