@@ -19,30 +19,36 @@ import mongoose from 'mongoose';
 }
 */
 
+//DO NOT DIRECTLY CALL db.save() on this schema
 const userMessage = mongoose.Schema({
 						
 						message: {
-							_id:false,
-							date: String,
-							time: String,
-							sender: String,
-							text: String 
+							date: {type: String, required: true},
+							time: {type: String, required: true},
+							sender: {type: String, required: true},
+							text: {type: String, required: true}
 						}	
 				});
-
-const privateMsg = mongoose.Schema({
-	_id: false,
-	userId : String,
-	recipientId : String ,
-		messages: [userMessage]
+//DO NOT DIRECTLY CALL db.save() on this schema
+const privateConvo = mongoose.Schema({
+			 _id: {type: String, required: true },
+	recipientId : {type: String, required: true , unique: true, dropDups: true},
+		messages: {type: [userMessage]}
 });
 
-const sample = mongoose.Schema({
-	look: String
+const userPrivateConvos = mongoose.Schema({
+	_id: {type: String, required: true},
+	privateConvos: {type: [privateConvo]}
+});
+
+const users = mongoose.Schema({
+	_id: {type: String, required: true},
+	isActive: {type: Boolean, required: true} 
 });
 
 
-mongoose.model('PrivateMsg', privateMsg);
+mongoose.model('PrivateConvo', privateConvo);
+mongoose.model('UserPrivateConvos', userPrivateConvos);
 mongoose.model('Message', userMessage);
-mongoose.model('Look', sample);
+mongoose.model('Users', users);
 
