@@ -35,9 +35,9 @@
 
 5. **Hasan Raza**
 
-    LinkedIn: 
+    LinkedIn: https://www.linkedin.com/in/norris-wise-jr-57352189/
 
-    Github: 
+    Github: https://github.com/WiseNN
 
     Website: 
 
