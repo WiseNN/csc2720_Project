@@ -1,0 +1,116 @@
+*{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+/*    border: 1px solid red;*/
+    box-sizing: border-box;
+}
+.screenContainer{
+    position: relative;
+    background-color: antiquewhite;
+    height: 100%;
+    min-width: 768px;
+    width: 100%;
+/*    border: green 1px;*/
+    /*    min-height: 1024px;*/
+    
+}
+
+.convosBox {
+  position: absolute;
+    top: 0px;
+    left: 0px;
+    min-width: 230.4px;
+    width: 30%;
+    background-color: goldenrod;
+}
+
+.msgBox {
+      position: absolute;
+    top: 0px;
+    left: 30%;
+    min-width: 499.2px;
+    width: 70;
+     
+    background-color: skyblue;
+    overflow: hidden;
+    width: 70%;
+}
+
+.sendMsgBox {
+	position: absolute;
+    left: 0px;
+    bottom: 0px;
+    height: 25%;
+    width:100%;
+/*    border: solid green 0.5px;*/
+    background-color: saddlebrown;
+}
+
+.msgDisplay {
+	background-color: darkcyan;
+    position: absolute;
+    left:0px;
+    top:0px;
+    height: 75%;
+/*    border: red 3px solid;*/   
+/*    height:100%;*/
+/*    width: 100%;*/    
+}
+
+.userConvo {
+    position: relative;
+    
+    
+	background-color: burlywood;
+/*    width: 50%;*/
+    height: 18%;
+    
+}
+.recipientUsernameInConvoBox {
+    
+    background-color: beige;
+    /* position: absolute; */
+    top: 3px;
+    left: 0px;
+    /* height: 21%; */
+    padding-bottom: 3%;
+    padding-right: 3%;
+    padding-top: 3%;
+    padding-left: 1%;
+    width: auto;
+    border-radius: 0px 5px 5px 0px;
+    font-size: 150%;
+    
+    
+}
+
+
+/****
+ALTERNATE ATTRIBUTES, USES ABSOLUTE POSITIONING OF PARENT CONTAINERS VIA PERCENTAGES VS DISPLAY: INLINE-BLOCK (PROBLEMATIC), WILL USE IF NECESSARY
+
+
+.msgBox {
+    position: absolute;
+    top: 0px;
+    left: 30%;
+    min-width: 499.2px;
+    width: 70;
+     
+    background-color: skyblue;
+    overflow: hidden;
+    width: 70%;
+}
+.convosBox {
+
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    min-width: 230.4px;
+    width: 30%;
+    background-color: goldenrod;
+}
+
+***/
