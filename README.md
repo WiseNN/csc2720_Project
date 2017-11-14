@@ -43,9 +43,9 @@
 
 6. **Norris Wise**
 
-    LinkedIn: 
+    LinkedIn: [https://www.linkedin.com/in/norris-wise-jr-57352189/](https://www.linkedin.com/in/norris-wise-jr-57352189/)
 
-    Github: 
+    Github: [https://github.com/WiseNN](https://github.com/WiseNN)
 
     Website: 
 
