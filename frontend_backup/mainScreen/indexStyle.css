@@ -19,10 +19,12 @@
 }
 
 .convosBox {
-  position: absolute;
+      position: absolute;
     top: 0px;
     left: 0px;
     min-width: 230.4px;
+    overflow-x: hidden;
+    overflow-y: auto;
     width: 30%;
     background-color: goldenrod;
 }
@@ -63,7 +65,7 @@
 .userConvo {
     position: relative;
     
-    
+        margin-top: 1%;
 	background-color: burlywood;
 /*    width: 50%;*/
     height: 18%;
@@ -71,20 +73,29 @@
 }
 .recipientUsernameInConvoBox {
     
-    background-color: beige;
+        background-color: beige;
     /* position: absolute; */
-    top: 3px;
+    top: 4px;
     left: 0px;
     /* height: 21%; */
     padding-bottom: 3%;
     padding-right: 3%;
-    padding-top: 3%;
+    padding-top: 1%;
+    /* margin-top: 26%; */
     padding-left: 1%;
     width: auto;
-    border-radius: 0px 5px 5px 0px;
-    font-size: 150%;
+    border-radius: 0px 0px 5px 0px;
+    font-size: 150%;  
+}
+.divider{
     
-    
+        /* top: 0px; */
+    display: block;
+    margin-top: -6.4%;
+    margin-left: 5%;
+    border: none;
+    /* left: 0px; */
+    box-shadow: 0 20px 20px -20px #333
 }
 
 
