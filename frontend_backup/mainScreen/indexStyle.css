@@ -124,6 +124,7 @@
     overflow-y: auto;
     padding-left: 2.5%;
     padding-right: 2.5%; 
+    scroll-behavior: smooth;
 }
 
 .msgContainer {    
@@ -159,7 +160,6 @@
     border: solid 2px black;
     background-color: rgb(128, 238, 0);
     /* border: solid red 1px; */
-    
 }
 .userNamePlate {
 	position: absolute;
@@ -191,7 +191,6 @@
 }
 .msgBubbleTxtRight {
     transform: scale(-1, 1);
-
 }
 
 
