@@ -1,0 +1,30 @@
+//private chat messages between user/responder/messages (messages will be sorted by uid key created by mongoDB)
+/*
+{
+	privateChat :{
+			userId :{
+				recipientId :{
+						messages : uid(ObjectID_Key) : {
+							date : `_DATE`,
+							time : _TIME,
+							sender : _recipientId or _userId,
+							messages : _MESSAGE
+								
+					}
+				}
+	
+		} 
+	}
+}
+*/
+
+
+11/9/2017 -- 7:16pm -NW-
+--------------------
+writing in db.js, methods for CRUD in the Database; stopping point has been reached.
+	- Issues: Currently the privateConvo Schema is saving duplicate recipeints, even when a unique index has been included in the mongoose schema. I may have to go to stack overflow to solve this problem
+	- Next Step: The addMessage() function contains the old logic to add/save messages to the Db, need to add the new logic. The messages have to be added through the Schema named: userPrivateConvos. Access the messages field by searching for a doc using the _id, and recipeintId, and pushing to the messages array using syntax: 
+	`userPrivateConvos.privateConvos.messages.push(newMsg);`
+	- Step After: 
+		- Write a way to remove/delete messages, 
+		- Go back and review all functions, write an ErrorHandler function to report errors to users & server admin, think about a way to scramble the user messages if they should be return scrambled (this is really a job for the front end, scrambled msgs will not be stored in db, but we can share algo. with the front-end devs)
