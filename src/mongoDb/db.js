@@ -75,13 +75,13 @@ export default class chatAppDb
 
 		userPrivateConvos.findById(sender,function(err,doc){
 
-			console.log("doc in userPrivateConvos: "+JSON.stringify(doc));
+			console.log("doc in userPrivateConvos: "+JSON.stringify(doc,null,3));
 
 			if(doc != null && err == null)
 			{
 				//push a new convo with a given recipeint in array, will track # of privateConvos
 				doc.privateConvos.push(newConvo);
-				that.saveDb(doc);
+				that.saveDb(doc,response);
 			}
 			else if (doc == null){
 				const responseMsg = "There is no user by that username"
