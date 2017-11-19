@@ -1,6 +1,30 @@
-## CSC 2720 Datastructures Group Project
 
-### Members:
+<hr />
+
+<b>Project: </b>
+We are building a Web Chat Application that will contain a smooth user interface similar to a mordern SMS/Texting Application. Our build will use the standard iOS texting app as a design guide, as it was built using S.O.L.I.D Object Oriented Design Principles. When sending messages to the recipient, we will communicate data from the front-end to the back-end using an Application Protocool Interface (API).  Upon initially viewing the chat app for the first time, a user should be able to select the option to login or quickly create a user account. We will allow users to login with other social media accounts such as: Facebook, Twitter, Gmai, etc. 
+
+<b>Features: </b>
+<ul>
+    <li>
+        encoding the originial human readable message. This not only allows the opportunity to showcase profficient usage of data   structures, but also allows the opportunity for our team of developers to explore the basics of encryption/decryption, and implementing our own proof of concept algorithms. 
+    </li>
+    <li>
+        Voice recognition & speech recognition. Voice Recognition Allows for users to be authenticated via distict wave patterns, speech recognition allows for speech to text transcription. This feature invovles more advanced concepts of Computer Science, touching sub-topics like Artificial Intelligence. Implementing Speech API's shows a fundumental understanding of practical, real world usage of today's cutting edge Software Technologies.
+    </li>    
+</ul>
+
+<hr />
+<h2>Documentation</h2>
+
+<h3>API: </h3>
+
+
+
+
+<hr />
+## CSC 2720 Datastructures Group Project Members
+
 1. **Adobah** 
 
     Github:
@@ -48,6 +72,3 @@
     Github: [https://github.com/WiseNN](https://github.com/WiseNN)
 
     Website: 
-
-## Project:
-Undecided
