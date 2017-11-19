@@ -1,7 +1,9 @@
 
-<hr />
 
-<b>Project: </b>
+
+<h2> Datastructures Group Project </h2>
+<hr>
+<b>Objective:</b> 
 We are building a Web Chat Application that will contain a smooth user interface similar to a mordern SMS/Texting Application. Our build will use the standard iOS texting app as a design guide, as it was built using S.O.L.I.D Object Oriented Design Principles. When sending messages to the recipient, we will communicate data from the front-end to the back-end using an Application Protocool Interface (API).  Upon initially viewing the chat app for the first time, a user should be able to select the option to login or quickly create a user account. We will allow users to login with other social media accounts such as: Facebook, Twitter, Gmai, etc. 
 
 <b>Features: </b>
