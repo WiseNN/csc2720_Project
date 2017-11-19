@@ -62,19 +62,19 @@ We are building a Web Chat Application that will contain a smooth user interface
   `createPrivateConvo(String sender,String recipeint,Object response) `
 
   
-            call: createPrivateConvo("WiseNN", "TaslimD", res)
-            response: 
-               {
-               	"_id" : "WiseNN",
-            	"privateConvos" : [
-                                    {
-                                        "recipientId" : "Nommel",
-                                        "_id" : "WiseNN",
-                                        "messages" : [ ]
-                                    }
-                               	],
-            	"__v" : 1
-               }
+        call: createPrivateConvo("WiseNN", "TaslimD", res)
+        response: 
+           {
+           	"_id" : "WiseNN",
+            "privateConvos" : [
+                                {
+                                  "recipientId" : "Nommel",
+                                   "_id" : "WiseNN",
+                                   "messages" : [ ]
+                                }
+                           	],
+            "__v" : 1
+           }
 
           
 </li>
@@ -140,20 +140,20 @@ We are building a Web Chat Application that will contain a smooth user interface
  <li>
    <h7>Reads the contents of a database document. Pass in a database Schema, and the function will log all documents present</h7>
          
-           `readDb(db)`
+      readDb(db)
 
  </li>
 
  <li>
    <h7>Saves newly created database documents. Pass in a database document, or a newly created object out of a database Schema, and a response object, to respond to the client.   The response Parameter can be: `null`</h7>
            
-           `saveDb(doc, response)`
+     saveDb(doc, response)
  </li>
 
  <li>
   <h7>Sends the client a JSON response and status code, depending on the request. Pass in the response object, an http status code, and the json content that needs to be sent back to the client. <b>Do Not Modify</b></h7>
         
-            `sendJSONresponse(res, status, content)`
+    sendJSONresponse(res, status, content)
 
  </li>
 </ul>
