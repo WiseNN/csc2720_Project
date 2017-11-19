@@ -18,6 +18,7 @@ const  myUtil = new Util();
 if(process.env.NODE_ENV == "production")
 {
 	//...mongoLab URL...
+	mongoose.connect("mongodb://WiseNN:Bladerz1@ds113606.mlab.com:13606/chatappproject");
 	console.log("production...".green)
 }else{
 	mongoose.connect('mongodb://localhost/chatAppProject');	
@@ -214,8 +215,26 @@ export default class chatAppDb
 		});
 
 			
+	}
 
 
+	encodeHelper(msgObj)
+	{
+		const requestOptions = {
+			url: "https://javachatapp-dataserver.herokuapp.com/",
+			method: "GET",
+			json:{message: "Hello there from node javascript"},
+			qs: {}
+
+		};
+		request(requestOptions, function(err, response, body){
+			if(err)
+			{
+
+			}else{
+
+			}
+		});
 	}
 
 	//DB Helper Function
