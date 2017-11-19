@@ -43,7 +43,7 @@ We are building a Web Chat Application that will contain a smooth user interface
    
 
 
-<h5>Response for all API Calls:</h5>
+<h5>Response format for all API Calls:</h5>
 
 
     {
