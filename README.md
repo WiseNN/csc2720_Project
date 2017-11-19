@@ -19,7 +19,47 @@ We are building a Web Chat Application that will contain a smooth user interface
 <hr />
 <h2>Documentation</h2>
 
-<h3>API: </h3>
+<h3>Messaging API: [type of api method call] </h3>
+
+<h5>A New User [Post]</h5>
+
+   `/api/users/createUser/:userId`
+   
+
+    
+<h5>Add Voice Recognition ID tag to a specified existing user [Put]</h5>
+
+   `/api/users/voiceRecognition/:userId/:voiceId`
+
+<h5>Create A Conversation Between the current user, and recipient user. DO NOT try to add messages to to a user's conversation with-out creating calling this end-point.</h5>
+
+   `/api/privateChat/createConvo/:userId/:recipeintId`
+   
+   
+<h5>Create A Conversation Between the current user, and recipient user. DO NOT try to add messages to to a user's conversation with-out creating calling this end-point.</h5>
+
+   `/api/privateChat/createConvo/:userId/:recipeintId`   
+   
+
+
+
+
+
+
+Response for all API Calls:
+
+
+    {
+      "error": boolean,
+      "success": booleam,
+      "msg": String
+    }        
+    
+
+
+
+
+    
 
 
 
