@@ -39,7 +39,7 @@ We are building a Web Chat Application that will contain a smooth user interface
 <h5>Add a message to a conversation between two users [PUT]</h5>
 <i>This route will likely be modified to serve a better implementation</i>
 
-   `/privateChat/addMessage/:userId/:recipientId/:message`   
+   `/api/privateChat/addMessage/:userId/:recipientId/:message`   
    
 
 
