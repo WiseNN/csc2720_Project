@@ -45,13 +45,23 @@ We are building a Web Chat Application that will contain a smooth user interface
 
 <h5>Response format for all API Calls:</h5>
 
+Successfull
 
+    {
+      "error": boolean,
+      "success": booleam,
+      "msg": String,
+      "obj": JSON Object
+    }      
+ 
+ Error / Unsuccessful
+ 
     {
       "error": boolean,
       "success": booleam,
       "msg": String
     }      
- 
+    
  <h3>Database Method Signatures</h3>
     <i>The  method signatures below will present the name of the function, the data type of each argument and the name of the argument as it appears in the database file. The response code block will not be the response to the user, but the object that is created in response to the database call.</i>
 <ul>
