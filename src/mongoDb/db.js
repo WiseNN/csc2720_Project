@@ -2,6 +2,7 @@
 import mongoose from 'mongoose';
 import colors from 'colors';
 import {ObjectId} from 'mongodb';
+import _ from 'underscore';
 
 
 
@@ -27,6 +28,7 @@ if(process.env.NODE_ENV == "production")
 
 
 const db = mongoose.connection;
+
 
 db.once('open', () => {console.log("database is connected!...".red);});
 
@@ -65,74 +67,7 @@ export default class chatAppDb
 		this.sendJSONresponse = this.sendJSONresponse.bind(this);
 	}
 	
-	//creates one private convo with a given recipeint
-	createPrivateConvo(sender, recipeint, response)
-	{
-		const newConvo = new privateConvo({
-			_id: sender,
-			recipientId: recipeint,
-		});
-		const that = this;
 
-		userPrivateConvos.findById(sender,function(err,doc){
-
-			console.log("doc in userPrivateConvos: "+JSON.stringify(doc,null,3));
-
-			if(doc != null && err == null)
-			{
-				//push a new convo with a given recipeint in array, will track # of privateConvos
-				doc.privateConvos.push(newConvo);
-				that.saveDb(doc,response);
-			}
-			else if (doc == null){
-				const responseMsg = "There is no user by that username"
-				console.log(responseMsg);
-				//interaal server error code because client is not responsible for error
-				that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
-
-
-			}
-			else if(err)
-			{
-				const responseMsg = "ERROR: "+err;
-				//internal server error code because client is not responsible for error
-				that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
-
-			}
-		});
-	}
-
-
-	deletePrivateConvo(sender, recipeint, response)
-	{
-		userPrivateConvos.findById(sender,function(err,doc){
-			
-			if(doc != null && err == null)
-			{
-				const that = this;
-				doc.privateConvos.findOneAndRemoveOne({recipeintId: recipeint},{new: true}, function(subErr, subDoc){
-					if(subDoc != null && subErr == nul)
-					{
-						const responseMsg = sender+" privateConvos After recipient: "+recipeint+" Deletion: "+subDoc;
-						console.log((responseMsg).green.bgBlack);
-
-						that.sendJSONresponse(response,204,{error:false, success:true, msg:responseMsg});
-
-					}
-					else{
-						const responseMsg = "deletePrivateConvo ERR >> findOneAndRemove SubERR: "+subErr;
-						console.log((responseMsg).red);
-
-						that.sendJSONresponse(response,404, {error:true, success:false, msg:responseMsg});
-					}
-				});	
-			}
-			else{
-				console.log(("deletePrivateConvo ERR: "+err).red);
-			}
-		});
-	}
-	
 	addUser(userId, response)
 	{
 		if(typeof userId != undefined)
@@ -149,6 +84,61 @@ export default class chatAppDb
 			this.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
 		}
 		
+	}
+
+	removeUser(userId, response)
+	{
+			debugger;
+		if(typeof userId != 'undefined')
+		{
+
+			const that = this;
+			userPrivateConvos.findByIdAndRemove(userId, (err,doc) => {
+				const responseMsg = "";
+				if(doc && !err)
+				{
+					that.saveDb(doc);
+				}
+				else if(err)
+				{
+					const responseMsg = "ERR: "+err;
+					console.log(responseMsg.red);
+					that.sendJSONresponse(response, 400, {error:true, success: false, msg: responseMsg});
+				}
+				else if(!doc)
+				{
+					const responseMsg = "No user with the username: "+userId+" exists";
+					console.log(responseMsg.red);
+					that.sendJSONresponse(response, 200, {error: true, success: false, msg: responseMsg});
+				}
+				
+			});
+
+
+			users.findByIdAndRemove(userId, (err, doc) => {
+
+				if(doc && !err)
+				{
+					that.saveDb(doc);
+				}
+				else if(err)
+				{
+					const responseMsg = "ERR: "+err;
+					that.sendJSONresponse(response, 400, {error:true, success: false, msg: responseMsg});
+				}
+				else if(!doc)
+				{
+					const responseMsg = "No user with the username: "+userId+" exists";
+					that.sendJSONresponse(response, 200, {error: true, success: false, msg: responseMsg});
+				}
+				
+			});
+		}
+		else
+		{
+			const responseMsg = "no UserId was specified"
+			this.sendJSONresponse(response, 404, {error:true, success: false, msg: responseMsg});
+		}
 	}
 
 	addVoiceRecognitionId(userId,voiceId,response)
@@ -168,27 +158,144 @@ export default class chatAppDb
 			
 		});
 	}
-	removeUser(userId, response)
-	{
-		if(typeof userId != 'undefined')
-		{
-			users.FindByIdAndRemove(userId);
-			userPrivateConvos.FindByIdAndRemove(userId);
-			const responseMsg = "user: "+userId+" has been removed";
-			sendJSONresponse(response, 204, {error:false, success: true, msg: responseMsg});
-		}
-		else{
-			const responseMsg = "A user cannot be removed from this document because it does not exist";
-			this.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
-		}
+
+	//creates one private convo with a given recipient
+	createPrivateConvo(sender, recipient, response)
+	{debugger;
+		const that = this;
+		var recipientExists = false;
+		users.count({_id: recipient}, function (err, count){ 
+		    debugger;
+		    if(!(count>0))
+		    {
+		        const responseMsg = "The recipient: "+recipient+" does not exist";
+		         that.sendJSONresponse(response, 200, {error:false, success:true, msg:responseMsg});
+
+		    }
+		    recipientExists = true;
+
+		    if(recipientExists)
+			{
+				const newConvo = new privateConvo({
+						_id: sender,
+						recipientId: recipient,
+					});
+
+			
+
+				privateConvo.findById(sender, function(err,doc){
+					debugger;
+					//if doc is present, do not save newConvo document
+					if(doc && !err)
+					{
+						that.updateUserPrivateConvos(sender, false, newConvo, response);
+					}//if err, send err
+					else if(err)
+					{
+						const responseMsg = "ERR: "+err;
+						that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
+					}//if doc is not present, save doc and update userPrivateConvos
+					else if(!doc)
+					{
+						that.saveDb(newConvo, null, that.updateUserPrivateConvos(sender, true, newConvo, response));
+					}
+
+				});	
+			}
+		}); 
+
+		
 	}
 
-	//adds a message to the privateConvo
-	addMessage(sender, recipeint, msg,response)
+	//adds the newly created convo to the user's list of conversations
+	updateUserPrivateConvos(sender, shouldSave, newConvo, response)
 	{
+		const that = this;
+		
+		userPrivateConvos.findById(newConvo._id, function(err,doc){
+				debugger;
+					console.log("doc in userPrivateConvos: "+JSON.stringify(doc,null,3));
+
+					
+					if(shouldSave)
+					{
+						if(doc != null && err == null)
+						{
+							//push a new convo with a given recipient in array, will track # of privateConvos
+							doc.privateConvos.push(newConvo);
+							that.saveDb(doc,response);
+
+
+						}
+						else if (doc == null){
+							const responseMsg = "There is no user by that username: "+newConvo._id;
+							console.log(responseMsg);
+							//interaal server error code because client is not responsible for error
+							that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+
+						}
+						else if(err)
+						{
+							const responseMsg = "ERROR: "+err;
+							//internal server error code because client is not responsible for error
+							that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
+
+						}	
+					}else{
+						
+						const responseMsg = "convo already created"
+						console.log(responseMsg.magenta.bgWhite);
+
+						that.sendJSONresponse(response, 200, {error:false, success: true, msg: responseMsg});
+					}
+					
+				});	
+
+	}
+
+
+	deletePrivateConvo(sender, recipient, response)
+	{
+		userPrivateConvos.findById(sender,function(err,doc){
+			
+			if(doc != null && err == null)
+			{
+				const that = this;
+				doc.privateConvos.findOneAndRemoveOne({recipientId: recipient},{new: true}, function(subErr, subDoc){
+					if(subDoc != null && subErr == nul)
+					{
+						const responseMsg = sender+" privateConvos After recipient: "+recipient+" Deletion: "+subDoc;
+						console.log((responseMsg).green.bgBlack);
+
+						that.sendJSONresponse(response,204,{error:false, success:true, msg:responseMsg});
+
+					}
+					else{
+						const responseMsg = "deletePrivateConvo ERR >> findOneAndRemove SubERR: "+subErr;
+						console.log((responseMsg).red);
+
+						that.sendJSONresponse(response,404, {error:true, success:false, msg:responseMsg});
+					}
+				});	
+			}
+			else{
+				console.log(("deletePrivateConvo ERR: "+err).red);
+			}
+		});
+	}
+	
+
+	
+
+	//adds a message to the privateConvo
+	addMessage(sender, recipient, msg,response)
+	{
+		
+
+		debugger;
 		const dateTime = myUtil.getDateAndTime();
 		console.log("DateTime: "+dateTime.date);
-		console.log("args: "+sender+", "+recipeint+", "+msg);
+		console.log("args: "+sender+", "+recipient+", "+msg);
 
 		const newMsg = new message({
 					date: dateTime.date,
@@ -199,26 +306,120 @@ export default class chatAppDb
 
 		//capture scope
 		const that = this;
-		//REPLACED userId Field with system _id from mongoDb, update all documentation
-		privateConvo.findOne({_id: sender, recipientId: recipeint}, function(err,doc){
+		
+		//add message to the user's convo thread
+		userPrivateConvos.findById(sender,function(err,senderDoc){
 
-			console.log(("err: "+JSON.stringify(err)+"\n doc: "+JSON.stringify(doc)).bgBlack);
+				debugger;
+				console.log(("err: "+JSON.stringify(err,null,3)+"\n doc: "+JSON.stringify(senderDoc,null,3)).bgBlack);
 
-			if(doc != null && err == null)
-			{
-				console.log(("see the messages Ary: "+JSON.stringify(doc.messages)).bgBlack);
-				that.saveDb(doc,response);
-			}else{
-				const responseMsg = "A Message cannot be added to this document because it does not exist. ERROR: "+err;
-				that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
-			}
-		});
+				if(senderDoc != null && err == null)
+				{
 
-			
+					const result = _.findWhere(senderDoc.privateConvos, {recipientId: recipient});
+					if(typeof result != 'undefined')
+					{
+						result.messages.push(newMsg);
+						console.log(JSON.stringify(result).black.bgWhite);
+						
+						
+								//send message to the recipient's convo thread
+								userPrivateConvos.findById(recipient,function(err,recipientDoc){
+									debugger;
+									console.log(("err: "+JSON.stringify(err)+"\n doc: "+JSON.stringify(recipientDoc)).bgBlack);
+
+									if(recipientDoc != null && err == null)
+									{
+
+										const result = _.findWhere(recipientDoc.privateConvos, {recipientId: sender});
+										if(typeof result != 'undefined')
+										{
+											result.messages.push(newMsg);
+											console.log(JSON.stringify(result).black.bgWhite);
+											that.saveDb(senderDoc, null, that.saveDb(recipientDoc, response));
+										}
+										else if (typeof result == 'undefined')
+										{
+												//if recipient private convo does not exist, create it, insert message and save
+
+												
+												// privateConvo.findById(recipient, function(err,doc){
+													debugger;
+													
+													// doc.recipientId = sender;
+
+
+													const newConvo = new privateConvo({
+														_id: recipient,
+														recipientId: sender,
+													});
+
+													const newConvoWithMsg = new privateConvo({
+														_id: recipient,
+														recipientId: sender,
+														messages: [newMsg]
+													});
+
+													recipientDoc.privateConvos.push(newConvoWithMsg);
+
+													//save sender doc, newConvo doc & recipientDoc	
+													that.saveDb(newConvo, null, that.saveDb(recipientDoc,null, that.saveDb(senderDoc, response)));
+
+												// });
+
+												
+
+												
+												
+
+
+
+										}			
+									}
+									else if(err)
+									{
+										debugger;
+										const responseMsg = "ERROR: "+err;
+										that.sendJSONresponse(response, 400, {error:true, success:false, msg:responseMsg});
+									}
+									else if(recipientDoc == null)
+									{
+										debugger;
+										const responseMsg = "This User Does not Exist"
+										that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+									}
+								});
+
+
+						
+					}	
+					else if (typeof result == 'undefined')
+					{
+							const responseMsg = "The recipient: "+recipient+" does not exist";
+							that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg})
+
+					}	
+
+
+						
+				}
+				else if(err)
+				{
+					debugger;
+					const responseMsg = "ERROR: "+err;
+					that.sendJSONresponse(response, 400, {error:true, success:false, msg:responseMsg});
+				}
+				else if(senderDoc == null)
+				{
+					debugger;
+					const responseMsg = "This User Does not Exist"
+					that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+				}
+		});	
 	}
 
-
-	encodeHelper(msgObj)
+	//Sends a request to java server to encrpt data
+	encodeHelper(msgObj, response)
 	{
 		const requestOptions = {
 			url: "https://javachatapp-dataserver.herokuapp.com/",
@@ -227,12 +428,21 @@ export default class chatAppDb
 			qs: {}
 
 		};
+		const that = this;
 		request(requestOptions, function(err, response, body){
-			if(err)
+			if(!err && body)
+			{
+				// response
+			}
+			else if (err)
 			{
 
-			}else{
-
+			}
+			else if (!body)
+			{
+				const responseMsg = "Something Has went wrong, there is no data. Please contact a Server Administrator Immediately"
+				
+				that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
 			}
 		});
 	}
@@ -246,12 +456,12 @@ export default class chatAppDb
 	{
 		db.find((err, doc) => {
 
-			console.log("ReadDB collection named: "+this.constructor.modelName+":: "+JSON.stringify(doc,null,3));
+			console.log("ReadDB collection named: "+doc.constructor.modelName+":: "+JSON.stringify(doc,null,3));
 		});
 	}
 
 
-	saveDb(doc, response)
+	saveDb(doc, response, callback)
 	{
 		callNum++;
 		console.log("SaveDb DOC: "+JSON.stringify(doc));
@@ -267,17 +477,24 @@ export default class chatAppDb
 				//if save returns newDoc, print newDoc in magenta with black background to console
 			if(newDoc)
 				{
-					const responseMsg = "\nupdated "+doc.constructor.modelName+" Database: "+newDoc+"\n";
+					const responseMsg = "Updated "+doc.constructor.modelName+" Database";
 					
-					console.log((responseMsg).magenta.bgBlack);
+					console.log((responseMsg+": "+JSON.stringify(newDoc, null, 3)).magenta.bgBlack);
 					
-					that.sendJSONresponse(response,201, {error: false, success:true, msg:responseMsg});
+
+
+					that.sendJSONresponse(response,201, {error: false, success:true, msg:responseMsg, obj: newDoc});
+
+					if(callback != null)
+					{
+						callback();
+					}	
 
 					
 				}//if save error, print error 
 				else if(err)
 				{
-					const responseMsg = "\nThere was an error updating an item. ERORR: "+err+"\n";
+					const responseMsg = "There was an error updating an item. ERORR: "+err;
 
 					console.log((responseMsg).red.bgWhite);
 
@@ -291,7 +508,9 @@ export default class chatAppDb
 				console.log((responseMsg).red);
 				
 				that.sendJSONresponse(response,500, {error: true, success:false, msg:responseMsg});
-		}	
+		}
+
+		
 		
 	}
 
@@ -300,8 +519,11 @@ export default class chatAppDb
 	{
 		if(res != null)
 		{
+			res.status(status);
 			res.json(content);
-			res.status(status);	
+
+
+				
 		}else{
 			console.warn("No JSON response was sent in call".red.bgYellow);
 		}
@@ -310,5 +532,9 @@ export default class chatAppDb
 	};
 }
 
+const db1 = new chatAppDb();
+// db1.addUser("WiseNN");
+// db1.addVoiceRecognitionId("WiseNN","kjdns89d8dshcsiudIWEUHIUWE");
+// db1.removeUser("WiseNN");
 
 

@@ -11,7 +11,7 @@ db.addUser("WiseNN");
 db.createPrivateConvo("WiseNN", "TaslimD")
 db.deletePrivateConvo("WiseNN", "TaslimD", null);
 db.removeUser("WiseNN", null);
-db.addMessage("WiseNN", "TaslimD", "Whats up bro! This this is finally off the ground! 😅",db.saveDb);
+db.addMessage("WiseNN", "TaslimD", "Hey What's Up!");
 db.readDb(users);
 db.saveDb(users, null)
 

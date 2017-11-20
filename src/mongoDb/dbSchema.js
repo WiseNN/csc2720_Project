@@ -22,23 +22,23 @@ import mongoose from 'mongoose';
 //DO NOT DIRECTLY CALL db.save() on this schema
 const userMessage = mongoose.Schema({
 						
-						message: {
+						
 							date: {type: String, required: true},
 							time: {type: String, required: true},
 							sender: {type: String, required: true},
 							text: {type: String, required: true}
-						}	
+							
 				});
 //DO NOT DIRECTLY CALL db.save() on this schema
 const privateConvo = mongoose.Schema({
 			 _id: {type: String, required: true },
-	recipientId : {type: String, required: true , unique: true, sparse: true, dropDups: true},
+	recipientId : {type: String, required: false , unique: true, sparse: true},
 		messages: {type: [userMessage]}
 });
 
 const userPrivateConvos = mongoose.Schema({
 	_id: {type: String, required: true},
-	privateConvos: {type: [privateConvo]}
+	privateConvos: {type: [privateConvo], unique: true, sparse: true}
 });
 
 const users = mongoose.Schema({
@@ -46,6 +46,14 @@ const users = mongoose.Schema({
 	voiceId: {type: String, required: false},
 	isActive: {type: Boolean, required: true} 
 });
+
+privateConvo.index(
+    { recipientId: 1},
+    {
+        partialFilterExpression: { recipientId: { $exists: true } }
+        
+    }
+);
 
 
 mongoose.model('PrivateConvo', privateConvo);
