@@ -32,7 +32,7 @@ const userMessage = mongoose.Schema({
 //DO NOT DIRECTLY CALL db.save() on this schema
 const privateConvo = mongoose.Schema({
 			 _id: {type: String, required: true },
-	recipientId : {type: String, required: true , unique: true, dropDups: true},
+	recipientId : {type: String, required: true , unique: true, sparse: true, dropDups: true},
 		messages: {type: [userMessage]}
 });
 
@@ -43,6 +43,7 @@ const userPrivateConvos = mongoose.Schema({
 
 const users = mongoose.Schema({
 	_id: {type: String, required: true},
+	voiceId: {type: String, required: false},
 	isActive: {type: Boolean, required: true} 
 });
 
