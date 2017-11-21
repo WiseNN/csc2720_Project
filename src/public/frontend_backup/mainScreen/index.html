@@ -8,7 +8,7 @@
   
   <meta name="Norris Wise Jr" content="Messenger">
 
-  <link rel="stylesheet" href="indexStyle.css">
+  <link rel="stylesheet" href="/css/indexStyle.css">
 
   <!--[if lt IE 9]>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv.js"></script>
@@ -18,84 +18,8 @@
 <body>
     <div class="screenContainer">
         
-        <div class="convosBox">
-<!--            ConvosBoxLeft-->
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
+        <div class="convosBox" id="convoBoxWrapper">
             
-            
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
-            
-            
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
-            
-            
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
-            
-            
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
-            
-            
-            <div class="userConvo">
-<!--                UserConversation-->
-                
-                <p class="convoBoxText">
-                    <span   class="recipientUsernameInConvoBox">userNameBox</span>
-<!--                    PREFIX WITH 2 SPACES!, THIS IS THE MAX NUMBER OF CHARACTERS W/O SPACES ->(199)!-->
-                    
-                      Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta 
-                    </p>
-            <hr class="divider"/>    
-            </div>
         </div>
         
         
@@ -104,7 +28,7 @@
 <!--            MsgBoxRight-->
             <span class="msgDisplay">
 <!--                msgDisplay-->
-                <div class="msgsContainer">
+                <div class="msgsContainer" id="msgsWrapper">
 <!--                    holds All Messages in Thread-->
                     
                     
@@ -323,20 +247,28 @@
                 <div class="cameraIcon">
 <!--                    cameraIcon-->
                 </div>
-                <div class="textBox">
+                <div class="textBoxWrapper">
+                    <textarea class="textBox"></textarea>
 <!--                    textBox-->
                 </div>
-                <div class="micIcon">micIcon</div>
+                <div class="micIcon">
+<!--                    micIcon-->
+                </div>
+                <div class="encodeButton">
+<!--                    encodeButton-->
+                </div>
+                <div class="sendBtn">
+<!--                    sendButton-->
+                </div>
 
             </span>
         </div>
         
     </div>
-    <script src="http://localhost:3300/socket.io/socket.io.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="socket.io/socket.io.js"></script>
     <!-- <script src="https://cdn.socket.io/socket.io-1.4.0.js"></script> -->
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js.map"></script> -->
-
-    
 
   <script src="scripts/mainScript.js"></script>
 </body>

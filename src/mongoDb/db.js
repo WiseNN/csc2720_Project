@@ -444,13 +444,42 @@ export default class chatAppDb
 	/******************************************************************************/
 	
 	//not available to call from API
-	readDb(db)
+	readDb(db, userId,response)
 	{
-		db.find((err, doc) => {
+		if(db)
+		{
+			db.find((err, doc) => {
+				console.log("ReadDB collection named: "+doc.constructor.modelName+":: "+JSON.stringify(doc,null,3));
+			});	
+		}
+		else if (response)
+		{
+			const that = this;
+			userPrivateConvos.findById(userId, function(err, doc){
 
-			console.log("ReadDB collection named: "+doc.constructor.modelName+":: "+JSON.stringify(doc,null,3));
-		});
+				
+							debugger;
+							//if doc is present, do not save newConvo document
+							if(doc && !err)
+							{
+								const responseMsg = "Reading Database";
+								that.sendJSONorSocketresponse(response, 200, {error:false, success:true, msg:responseMsg, obj: doc});
+							}//if err, send err
+							else if(err)
+							{
+								const responseMsg = "ERR: "+err;
+								that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
+							}//if doc is not present, save doc and update userPrivateConvos
+							else if(!doc)
+							{
+								const responseMsg = "The user: "+userId+" does ont exist";
+								that.sendJSONorSocketresponse(response, 404, {error:false, success:true, msg:responseMsg});
+							}
+					});
+		}
 	}
+		
+	
 
 
 	saveDb(doc, response, callback, socketDic)

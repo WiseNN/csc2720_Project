@@ -51,6 +51,7 @@ router.get("encodeHelper/:msgs", (req, res) => {
 });
 
 
+
 //add message to a private chat
 //PLEASE UPDATE TO USE REQUEST BODY, DO NOT PASS MESSAGE VIA PARAMS
 
@@ -61,6 +62,11 @@ router.put("/privateChat/addMessage/:userId/:recipientId/:message", (req,res) =>
 
 	
 });
+
+router.get("/getMessages/:userId", (req, res) => {
+	db.readDb(null, req.params.userId, res);
+});
+
 
 
 
