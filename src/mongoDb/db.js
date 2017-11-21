@@ -64,7 +64,7 @@ export default class chatAppDb
 		this.addMessage = this.addMessage.bind(this);
 		this.readDb = this.readDb.bind(this);
 		this.saveDb = this.saveDb.bind(this);
-		this.sendJSONresponse = this.sendJSONresponse.bind(this);
+		this.sendJSONorSocketresponse = this.sendJSONorSocketresponse.bind(this);
 	}
 	
 
@@ -81,7 +81,7 @@ export default class chatAppDb
 		}else{
 			const responseMsg = "There is no userName to add";
 			console.log(responseMsg.magenta.bgBlack);
-			this.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+			this.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 		}
 		
 	}
@@ -103,13 +103,13 @@ export default class chatAppDb
 				{
 					const responseMsg = "ERR: "+err;
 					console.log(responseMsg.red);
-					that.sendJSONresponse(response, 400, {error:true, success: false, msg: responseMsg});
+					that.sendJSONorSocketresponse(response, 400, {error:true, success: false, msg: responseMsg});
 				}
 				else if(!doc)
 				{
 					const responseMsg = "No user with the username: "+userId+" exists";
 					console.log(responseMsg.red);
-					that.sendJSONresponse(response, 200, {error: true, success: false, msg: responseMsg});
+					that.sendJSONorSocketresponse(response, 200, {error: true, success: false, msg: responseMsg});
 				}
 				
 			});
@@ -124,12 +124,12 @@ export default class chatAppDb
 				else if(err)
 				{
 					const responseMsg = "ERR: "+err;
-					that.sendJSONresponse(response, 400, {error:true, success: false, msg: responseMsg});
+					that.sendJSONorSocketresponse(response, 400, {error:true, success: false, msg: responseMsg});
 				}
 				else if(!doc)
 				{
 					const responseMsg = "No user with the username: "+userId+" exists";
-					that.sendJSONresponse(response, 200, {error: true, success: false, msg: responseMsg});
+					that.sendJSONorSocketresponse(response, 200, {error: true, success: false, msg: responseMsg});
 				}
 				
 			});
@@ -137,7 +137,7 @@ export default class chatAppDb
 		else
 		{
 			const responseMsg = "no UserId was specified"
-			this.sendJSONresponse(response, 404, {error:true, success: false, msg: responseMsg});
+			this.sendJSONorSocketresponse(response, 404, {error:true, success: false, msg: responseMsg});
 		}
 	}
 
@@ -153,7 +153,7 @@ export default class chatAppDb
 			else
 			{
 				const responseMsg = "Voice recognition cannot be setup for a user in this document because it does not exist ERROR: "+err;
-				that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+				that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 			}
 			
 		});
@@ -169,7 +169,7 @@ export default class chatAppDb
 		    if(!(count>0))
 		    {
 		        const responseMsg = "The recipient: "+recipient+" does not exist";
-		         that.sendJSONresponse(response, 200, {error:false, success:true, msg:responseMsg});
+		         that.sendJSONorSocketresponse(response, 200, {error:false, success:true, msg:responseMsg});
 
 		    }
 		    recipientExists = true;
@@ -193,7 +193,7 @@ export default class chatAppDb
 					else if(err)
 					{
 						const responseMsg = "ERR: "+err;
-						that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
+						that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
 					}//if doc is not present, save doc and update userPrivateConvos
 					else if(!doc)
 					{
@@ -231,14 +231,14 @@ export default class chatAppDb
 							const responseMsg = "There is no user by that username: "+newConvo._id;
 							console.log(responseMsg);
 							//interaal server error code because client is not responsible for error
-							that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 
 						}
 						else if(err)
 						{
 							const responseMsg = "ERROR: "+err;
 							//internal server error code because client is not responsible for error
-							that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
+							that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
 
 						}	
 					}else{
@@ -246,7 +246,7 @@ export default class chatAppDb
 						const responseMsg = "convo already created"
 						console.log(responseMsg.magenta.bgWhite);
 
-						that.sendJSONresponse(response, 200, {error:false, success: true, msg: responseMsg});
+						that.sendJSONorSocketresponse(response, 200, {error:false, success: true, msg: responseMsg});
 					}
 					
 				});	
@@ -267,14 +267,14 @@ export default class chatAppDb
 						const responseMsg = sender+" privateConvos After recipient: "+recipient+" Deletion: "+subDoc;
 						console.log((responseMsg).green.bgBlack);
 
-						that.sendJSONresponse(response,204,{error:false, success:true, msg:responseMsg});
+						that.sendJSONorSocketresponse(response,204,{error:false, success:true, msg:responseMsg});
 
 					}
 					else{
 						const responseMsg = "deletePrivateConvo ERR >> findOneAndRemove SubERR: "+subErr;
 						console.log((responseMsg).red);
 
-						that.sendJSONresponse(response,404, {error:true, success:false, msg:responseMsg});
+						that.sendJSONorSocketresponse(response,404, {error:true, success:false, msg:responseMsg});
 					}
 				});	
 			}
@@ -288,7 +288,7 @@ export default class chatAppDb
 	
 
 	//adds a message to the privateConvo
-	addMessage(sender, recipient, msg,response)
+	addMessage(sender, recipient, msg,response, socketDic)
 	{
 		
 
@@ -336,7 +336,7 @@ export default class chatAppDb
 										{
 											result.messages.push(newMsg);
 											console.log(JSON.stringify(result).black.bgWhite);
-											that.saveDb(senderDoc, null, that.saveDb(recipientDoc, response));
+											that.saveDb(senderDoc, null, that.saveDb(recipientDoc, response,null, socketDic),socketDic);
 										}
 										else if (typeof result == 'undefined')
 										{
@@ -363,30 +363,22 @@ export default class chatAppDb
 													recipientDoc.privateConvos.push(newConvoWithMsg);
 
 													//save sender doc, newConvo doc & recipientDoc	
-													that.saveDb(newConvo, null, that.saveDb(recipientDoc,null, that.saveDb(senderDoc, response)));
+													that.saveDb(newConvo, null, that.saveDb(recipientDoc,null, that.saveDb(senderDoc, response,null,socketDic), socketDic));
 
 												// });
-
-												
-
-												
-												
-
-
-
 										}			
 									}
 									else if(err)
 									{
 										debugger;
 										const responseMsg = "ERROR: "+err;
-										that.sendJSONresponse(response, 400, {error:true, success:false, msg:responseMsg});
+										that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
 									}
 									else if(recipientDoc == null)
 									{
 										debugger;
-										const responseMsg = "This User Does not Exist"
-										that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+										const responseMsg = "The User: "+recipient+" Does not Exist";
+										that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 									}
 								});
 
@@ -396,7 +388,7 @@ export default class chatAppDb
 					else if (typeof result == 'undefined')
 					{
 							const responseMsg = "The recipient: "+recipient+" does not exist";
-							that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg})
+							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg})
 
 					}	
 
@@ -407,13 +399,13 @@ export default class chatAppDb
 				{
 					debugger;
 					const responseMsg = "ERROR: "+err;
-					that.sendJSONresponse(response, 400, {error:true, success:false, msg:responseMsg});
+					that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
 				}
 				else if(senderDoc == null)
 				{
 					debugger;
-					const responseMsg = "This User Does not Exist"
-					that.sendJSONresponse(response, 404, {error:true, success:false, msg:responseMsg});
+					const responseMsg = "This User: "+sender+" does not Exist";
+					that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 				}
 		});	
 	}
@@ -442,7 +434,7 @@ export default class chatAppDb
 			{
 				const responseMsg = "Something Has went wrong, there is no data. Please contact a Server Administrator Immediately"
 				
-				that.sendJSONresponse(response, 500, {error:true, success:false, msg:responseMsg});
+				that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
 			}
 		});
 	}
@@ -461,7 +453,7 @@ export default class chatAppDb
 	}
 
 
-	saveDb(doc, response, callback)
+	saveDb(doc, response, callback, socketDic)
 	{
 		callNum++;
 		console.log("SaveDb DOC: "+JSON.stringify(doc));
@@ -480,10 +472,9 @@ export default class chatAppDb
 					const responseMsg = "Updated "+doc.constructor.modelName+" Database";
 					
 					console.log((responseMsg+": "+JSON.stringify(newDoc, null, 3)).magenta.bgBlack);
-					
+					debugger;
 
-
-					that.sendJSONresponse(response,201, {error: false, success:true, msg:responseMsg, obj: newDoc});
+					that.sendJSONorSocketresponse(response,201, {error: false, success:true, msg:responseMsg, obj: newDoc}, socketDic);
 
 					if(callback != null)
 					{
@@ -498,7 +489,7 @@ export default class chatAppDb
 
 					console.log((responseMsg).red.bgWhite);
 
-					that.sendJSONresponse(response,400, {error: true, success:false, msg:responseMsg});
+					that.sendJSONorSocketresponse(response,400, {error: true, success:false, msg:responseMsg}, socketDic);
 					
 				}
 			});	
@@ -507,7 +498,7 @@ export default class chatAppDb
 				
 				console.log((responseMsg).red);
 				
-				that.sendJSONresponse(response,500, {error: true, success:false, msg:responseMsg});
+				that.sendJSONorSocketresponse(response,500, {error: true, success:false, msg:responseMsg}, socketDic);
 		}
 
 		
@@ -515,16 +506,27 @@ export default class chatAppDb
 	}
 
 	
-	sendJSONresponse(res, status, content)
+	sendJSONorSocketresponse(res, status, content,socketDic)
 	{
 		if(res != null)
 		{
 			res.status(status);
 			res.json(content);
-
-
 				
-		}else{
+		}
+		else if(socketDic != null)
+		{
+			console.log("CALLED SOCKET-DIC!".green.bgBlack);
+			if(socketDic[content.obj._doc._id] != null)
+			{
+				socketDic[content.obj._doc._id].emit('newMsg', content);
+			}else{
+				console.log(("USER: "+content.obj._doc._id+" is not online").red.bgWhite);
+			}
+			
+
+		}
+		else{
 			console.warn("No JSON response was sent in call".red.bgYellow);
 		}
 		

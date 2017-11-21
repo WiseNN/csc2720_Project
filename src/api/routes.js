@@ -58,6 +58,8 @@ router.put("/privateChat/addMessage/:userId/:recipientId/:message", (req,res) =>
 	
 	console.log("params from routes: "+req.params.message);
 	db.addMessage(req.params.userId, req.params.recipientId, req.params.message, res);
+
+	
 });
 
 
