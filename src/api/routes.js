@@ -34,6 +34,7 @@ router.put("/users/voiceRecognition/:userId/:voiceId", (req,res) => {
 //creates a private convo with the sender & recipient
 router.post("/privateChat/createConvo/:userId/:recipeintId", (req,res) => {
 
+
 	db.createPrivateConvo(req.params.userId,req.params.recipeintId, res);
 
 });
@@ -58,6 +59,8 @@ router.get("encodeHelper/:msgs", (req, res) => {
 router.put("/privateChat/addMessage/:userId/:recipientId/:message", (req,res) => {
 	
 	console.log("params from routes: "+req.params.message);
+
+	
 	db.addMessage(req.params.userId, req.params.recipientId, req.params.message, res);
 
 	

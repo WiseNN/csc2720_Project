@@ -185,8 +185,12 @@ export default class chatAppDb
 
 				privateConvo.findById(sender, function(err,doc){
 					debugger;
-					//if doc is present, do not save newConvo document
-					if(doc && !err)
+
+					
+					const result = _.findWhere(doc.privateConvos, {recipientId: recipient});
+
+					//if doc is present and result not null, do not save newConvo document
+					if((typeof result != "undefined") && doc && !err)
 					{
 						that.updateUserPrivateConvos(sender, false, newConvo, response);
 					}//if err, send err
@@ -195,9 +199,9 @@ export default class chatAppDb
 						const responseMsg = "ERR: "+err;
 						that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
 					}//if doc is not present, save doc and update userPrivateConvos
-					else if(!doc)
+					else if(!doc || (typeof result == "undefined"))
 					{
-						that.saveDb(newConvo, null, that.updateUserPrivateConvos(sender, true, newConvo, response));
+						that.saveDb(newConvo, null, that.updateUserPrivateConvos(sender, true, newConvo, response),null);
 					}
 
 				});	

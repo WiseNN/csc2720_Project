@@ -2,119 +2,122 @@
   const socket = io('http://localhost:3300');
   // var socket = io.connect('http://mydomain.com/');
   
-
-
-//when server has disconnected, not when user disconnects
-
-
-  
-
-
-  
-socket.on('disconnect', function(){
-
-  	console.log("Uh-Oh, Looks like the server is down. Please wait, it will be back online shortly");
-  	// socket.emit('disconnected', 'WiseNN');
-});
-
-
-
-
-  socket.on('connect', function(){
-
-  	
-  	socket.emit('addCustomId', "WiseNN");
-
-  	
-
-  		const params = {
-  		sender: "WiseNN",
-  		recipient: "TaslimD",
-  		msg: "Whats up, building the socket server now"
-  	};
-
-  	socket.emit('addMessage', params);
-
-  	socket.on('newMsg', function(data){
-  		console.log(JSON.stringify(data,null,3));
-  	});
-
-  		// window.onbeforeunload = confirmExit;
-  
-	  	// function confirmExit()
-	  	// {
-		  //   socket.emit('disconnected', 'WiseNN');
-	   //  }
-
-
-
+  document.addEventListener("DOMContentLoaded", function(event) {
+          
+          const elm = document.getElementById('sendBtnId');
+          var passiveSupported = false;
+          
+          elm.addEventListener("mouseup", handleMouseUp, passiveSupported
+                               ? { passive: true } : false);
 
   });
 
-  window.onload = function(){
-     $.ajax({url: "http://localhost:3300/api/getMessages/WiseNN", async: false, success: function(result){
-            console.log(JSON.stringify(result,null,3));
 
-            for(int i=0;i<obj.privateConvos;i++)
+
+
+  window.onload = () =>
+  {
+
+
+     
+
+     debugger;
+
+
+    
+    // console.log("http://"+window.location.host, '/api/getMessages/', "WiseNN");
+    
+    const url = createUrl(window.location.host, 'api/getMessages/', "WiseNN");
+
+     $.ajax({url: url, async: true, success: function(result){
+            debugger;
+            loadMsgs(result);  
+        }
+      });
+  }  
+
+const createUrl = (host, path, params) =>
+{
+  return "http://"+host+"/"+path+params;
+}
+
+const handleMouseUp = function(evt){
+  console.log("event handled");
+  const elm = document.getElementById("myTextBox");
+  console.log("Show me text: "+elm.value);
+
+  socket.emit('addMsg', );
+
+};
+
+const loadMsgs = (result) =>
+{
+  var convoFrags = document.createDocumentFragment();
+            var msgsFrags = document.createDocumentFragment();
+
+            // console.log(JSON.stringify(result,null,3));
+
+            const userId = result.obj._id;
+
+
+            if(result.success)
             {
-              //get the convo box
-              privateConvos[i].recipeintId
+              //get privateConvos
+              const privateConvos = result.obj.privateConvos;
 
-
-
-              for(int k=0;k<privateConvos[i].messages;k++)
+              
+              for(var i=0; i < privateConvos.length;i++)
               {
+                const recipientId = privateConvos[i].recipientId;
+                const messages = privateConvos[i].messages;
+                const textPreview = messages[messages.length - 1].text;
+                
+                if(textPreview.length > 199)
+                {
+                  textPreview = textPreview.substring(0,200);
+                }
 
-              }
+                const userConvo = addUserConvo(textPreview, recipientId);
+                convoFrags.appendChild(userConvo);
 
+                debugger;
+                for(var k=0; k<messages.length; k++)
+                {
+                  const msg = addMsg(userId, recipientId, messages[k]);
+                  msgsFrags.appendChild(msg);
+                }
+
+              }  
+            debugger;
+              const convos = document.getElementById("convoBoxWrapper");
+              const msgs = document.getElementById("msgsWrapper");
+
+              convos.appendChild(convoFrags);
+              msgs.appendChild(msgsFrags);
             }
-        }});
-  };
-
-
-
-
-
-
-//  <div class="left msgContainer">
-
-//     <div class="userMsgBubble">
-
-//          <div class="msgBubbleTxtLeft">
-//             Hello there my name is norris. i like to do a lot of things on the weekend, but I never actually get to lol.
-//         </div>
-//     </div>
-//     <div class="onlineIndicator">
-
-//     </div>
-//     <div class="userNamePlate">
-
-//     </div>
-// </div>
-
-
-  
-const addMsg = function(userId, recipient, msgObj)
+}
+//adds a message to the msgsContainer  
+const addMsg = (userId, recipientId, msgObj) =>
 {
   var whichUser = "";
   if(userId == msgObj.sender)
   {
     whichUser = "left";
   }
-  else if(recipient == msgObj.sender)
+  else if(recipientId == msgObj.sender)
   {
     whichUser = "right";
   }
 
   var frag = document.createDocumentFragment();
   var div1 = document.createElement('div');
-  div.className = whichUser+" msgContainer";
+  div1.className = whichUser+" msgContainer";
 
       var div2 = document.createElement('div');
       div2.className = "userMsgBubble";
 
           var div3 = document.createElement('div');
-          div3.className = "msgBubbleTxt"+whichUser;
+          div3.className = "msgBubbleTxt"+whichUser.capitalizeFirst();
           div3.textContent = msgObj.text; //add text for message here
 
       var div4 = document.createElement('div');
@@ -133,57 +136,93 @@ const addMsg = function(userId, recipient, msgObj)
   div1.appendChild(div5);
 
   frag.appendChild(div1);      
-
+  return frag;
 
 };
   
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 //creating userConvo fragment and adding it to DOM
-const addUserConvo = function(textPreview, recipientId)
+const addUserConvo = (textPreview, recipientId) =>
 {
   var frag = document.createDocumentFragment();
-  var div = document.createElement('div');
-  div.className = "userConvo";
+  var div1 = document.createElement('div');
+  div1.className = "userConvo";
     
       var p = document.createElement('p');
       p.className = "convoBoxText";
-      p.textContent = textPreview; //sets the text preview
+      
+      var textPreviewNode = document.createTextNode("  "+textPreview);  //sets the text preview
+      
 
           var span = document.createElement('span');
           span.className = "recipientUsernameInConvoBox";
           span.textContent = recipientId; //sets recipient username
 
-              var hr = document.createElement('hr');
-              hr.className = "divider";
+      var hr = document.createElement('hr');
+      hr.className = "divider";
 
-  div.appendChild(p);
+  div1.appendChild(p);
 
       p.appendChild(span);
+      p.appendChild(textPreviewNode);
 
-          span.appendChild(hr);            
+          div1.appendChild(hr);            
 
 
   //finally, add the userConvo to the convoBox
   // document.getElementById('convoBoxWrapper').appendChild(div);
-  frag.appendChild(div);
+  frag.appendChild(div1);
   return frag;
 }
 
 
+String.prototype.capitalizeFirst = function(){
+    return this.charAt(0).toUpperCase() + this.slice(1);
+}
 
+
+
+// *********************************** SOCKET ******************************************
+
+
+//when server has disconnected, not when user disconnects  
+socket.on('disconnect', function(){
+
+    console.log("Uh-Oh, Looks like the server is down. Please wait, it will be back online shortly");
+    // socket.emit('disconnected', 'WiseNN');
+});
+
+
+
+
+  socket.on('connect', function(){
+
+    
+    socket.emit('addCustomId', "WiseNN");
+
+    
+
+      const params = {
+      sender: "WiseNN",
+      recipient: "TaslimD",
+      msg: "Whats up, building the socket server now"
+    };
+
+    socket.emit('addMessage', params);
+
+    socket.on('newMsg', function(data){
+      console.log(JSON.stringify(data,null,3));
+    });
+
+      window.onbeforeunload = confirmExit;
+  
+      function confirmExit()
+      {
+        socket.emit('disconnected', 'WiseNN');
+      }
+  });
   
 /*
 Observations: 

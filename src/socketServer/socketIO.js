@@ -35,7 +35,7 @@ import chatAppDb from '../mongoDb/db';
 
 			});
 
-			socket.on('addMessage', function(req){
+			socket.on('addMsg', function(req){
 				console.log("adding message...");	
 				db.addMessage(req.sender, req.recipient, req.msg, null, clients);
 			});
