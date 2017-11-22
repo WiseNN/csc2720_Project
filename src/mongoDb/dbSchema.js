@@ -30,15 +30,19 @@ const userMessage = mongoose.Schema({
 							
 				});
 //DO NOT DIRECTLY CALL db.save() on this schema
-const privateConvo = mongoose.Schema({
-			 _id: {type: String, required: true },
-	recipientId : {type: String, required: false , unique: true, sparse: true},
-		messages: {type: [userMessage]}
-});
+// const privateConvo = mongoose.Schema({
+// 			 _id: {type: String, required: true },
+// 	recipientId : {type: String, required: false , unique: true, sparse: true, dropDups: true},
+// 		messages: {type: [userMessage]}
+// });
 
 const userPrivateConvos = mongoose.Schema({
 	_id: {type: String, required: true},
-	privateConvos: {type: [privateConvo], unique: true, sparse: true}
+	privateConvos: {type: [{
+		 _id: {type: String, required: true },
+	recipientId : {type: String, required: false , unique: true, sparse: true, dropDups: true},
+		messages: {type: [userMessage]}
+	}], unique: true, sparse: true}
 });
 
 const users = mongoose.Schema({
@@ -47,7 +51,7 @@ const users = mongoose.Schema({
 	isActive: {type: Boolean, required: true} 
 });
 
-privateConvo.index(
+userPrivateConvos.index(
     { recipientId: 1},
     {
         partialFilterExpression: { recipientId: { $exists: true } }
@@ -56,7 +60,7 @@ privateConvo.index(
 );
 
 
-mongoose.model('PrivateConvo', privateConvo);
+// mongoose.model('PrivateConvo', privateConvo);
 mongoose.model('UserPrivateConvos', userPrivateConvos);
 mongoose.model('Message', userMessage);
 mongoose.model('Users', users);

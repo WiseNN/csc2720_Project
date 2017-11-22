@@ -38,7 +38,7 @@ var callNum = 0;
 import dbSchema from './dbSchema';
 //get Models from mongoose Schema 
 const userPrivateConvos = mongoose.model('UserPrivateConvos');
-const privateConvo = mongoose.model('PrivateConvo');
+// const privateConvo = mongoose.model('PrivateConvo');
 const message = mongoose.model('Message');
 const users = mongoose.model('Users');
 
@@ -75,8 +75,14 @@ export default class chatAppDb
 			const newUser = new users({_id:userId, isActive:true});
 			const newUserPrivateConvos = new userPrivateConvos({_id: userId, privateConvos: []});
 			
-			//save users Collection, then callback privateConvos Collection, pass null 'response' to avoid setting http headers twice
-			this.saveDb(newUser,null,this.saveDb(newUserPrivateConvos, response));	
+			debugger;
+			const that = this;
+			//save privateConvos Collection, then callback users Collection, pass null 'response' to avoid setting http headers twice
+			this.saveDb(newUserPrivateConvos,null,null,function(){
+
+				debugger;
+				that.saveDb(newUser,response,null,null);		
+			});
 			
 		}else{
 			const responseMsg = "There is no userName to add";
@@ -97,7 +103,7 @@ export default class chatAppDb
 				const responseMsg = "";
 				if(doc && !err)
 				{
-					that.saveDb(doc);
+					that.saveDb(doc,response);
 				}
 				else if(err)
 				{
@@ -109,26 +115,6 @@ export default class chatAppDb
 				{
 					const responseMsg = "No user with the username: "+userId+" exists";
 					console.log(responseMsg.red);
-					that.sendJSONorSocketresponse(response, 200, {error: true, success: false, msg: responseMsg});
-				}
-				
-			});
-
-
-			users.findByIdAndRemove(userId, (err, doc) => {
-
-				if(doc && !err)
-				{
-					that.saveDb(doc);
-				}
-				else if(err)
-				{
-					const responseMsg = "ERR: "+err;
-					that.sendJSONorSocketresponse(response, 400, {error:true, success: false, msg: responseMsg});
-				}
-				else if(!doc)
-				{
-					const responseMsg = "No user with the username: "+userId+" exists";
 					that.sendJSONorSocketresponse(response, 200, {error: true, success: false, msg: responseMsg});
 				}
 				
@@ -160,10 +146,11 @@ export default class chatAppDb
 	}
 
 	//creates one private convo with a given recipient
-	createPrivateConvo(sender, recipient, response)
+	createPrivateConvo(sender, recipient, response, callback)
 	{debugger;
 		const that = this;
-		var recipientExists = false;
+		
+		
 		users.count({_id: recipient}, function (err, count){ 
 		    debugger;
 		    if(!(count>0))
@@ -171,91 +158,76 @@ export default class chatAppDb
 		        const responseMsg = "The recipient: "+recipient+" does not exist";
 		         that.sendJSONorSocketresponse(response, 200, {error:false, success:true, msg:responseMsg});
 
-		    }
-		    recipientExists = true;
+		    }else
+		    {
+		    	//search for user in userPrivateConvos Schema
+				userPrivateConvos.findById(sender, function(err,doc){
+						debugger;
+							console.log("doc in userPrivateConvos: "+JSON.stringify(doc,null,3));
 
-		    if(recipientExists)
-			{
-				const newConvo = new privateConvo({
-						_id: sender,
-						recipientId: recipient,
-					});
-
-			
-
-				privateConvo.findById(sender, function(err,doc){
-					debugger;
-
-					
-					const result = _.findWhere(doc.privateConvos, {recipientId: recipient});
-
-					//if doc is present and result not null, do not save newConvo document
-					if((typeof result != "undefined") && doc && !err)
+					//doc error checking, then handle data
+					if(doc != null && err == null)
 					{
-						that.updateUserPrivateConvos(sender, false, newConvo, response);
-					}//if err, send err
+						//see if recipient and user already have a convo in userPrivateConvos Schema, if not create & save convo
+						const result = _.findWhere(doc.privateConvos, {recipientId: recipient});
+						if(typeof result == "undefined")
+						{
+							
+							//creation
+							const newConvo = {
+								_id: sender,
+								recipientId: recipient,
+							};
+							//           {doc}
+							//add to userPrivateConvos.privateConvos array in Schema & save
+							//             ^
+							doc.privateConvos.push(newConvo);
+							
+							that.saveDb(doc,response,null,callback);
+
+						}
+						//if there is a doc, report that it exists
+						else if (typeof result != "undefined")
+						{
+							const responseMsg = "convo in "+doc.constructor.modelName+" between sender: "+sender+" & recipient: "+recipient+" has already been created";
+							console.log(responseMsg.magenta.bgWhite);
+							that.sendJSONorSocketresponse(response, 204, {error:false, success: true, msg: responseMsg});
+						}
+						//else report that there is a serious error creating userPrivateConvos
+						else{
+							const responseMsg = "Serious ERROR in Schema: "+doc.constructor.modelName+" check createPrivateConvo() function";
+							console.log(responseMsg.magenta.bgWhite);
+							that.sendJSONorSocketresponse(response, 500, {error:true, success: false, msg: responseMsg});
+
+						}
+
+						
+
+
+					}
+					else if (doc == null){
+						const responseMsg = "There is no user by that username: "+newConvo._id;
+						console.log(responseMsg);
+						//interaal server error code because client is not responsible for error
+						that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
+
+					}
 					else if(err)
 					{
-						const responseMsg = "ERR: "+err;
+						const responseMsg = "createPrivateConvo() ERROR: "+err;
+						//internal server error code because client is not responsible for error
 						that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
-					}//if doc is not present, save doc and update userPrivateConvos
-					else if(!doc || (typeof result == "undefined"))
-					{
-						that.saveDb(newConvo, null, that.updateUserPrivateConvos(sender, true, newConvo, response),null);
-					}
 
-				});	
-			}
-		}); 
-
-		
-	}
-
-	//adds the newly created convo to the user's list of conversations
-	updateUserPrivateConvos(sender, shouldSave, newConvo, response)
-	{
-		const that = this;
-		
-		userPrivateConvos.findById(newConvo._id, function(err,doc){
-				debugger;
-					console.log("doc in userPrivateConvos: "+JSON.stringify(doc,null,3));
-
-					
-					if(shouldSave)
-					{
-						if(doc != null && err == null)
-						{
-							//push a new convo with a given recipient in array, will track # of privateConvos
-							doc.privateConvos.push(newConvo);
-							that.saveDb(doc,response);
-
-
-						}
-						else if (doc == null){
-							const responseMsg = "There is no user by that username: "+newConvo._id;
-							console.log(responseMsg);
-							//interaal server error code because client is not responsible for error
-							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
-
-						}
-						else if(err)
-						{
-							const responseMsg = "ERROR: "+err;
-							//internal server error code because client is not responsible for error
-							that.sendJSONorSocketresponse(response, 500, {error:true, success:false, msg:responseMsg});
-
-						}	
-					}else{
-						
-						const responseMsg = "convo already created"
-						console.log(responseMsg.magenta.bgWhite);
-
-						that.sendJSONorSocketresponse(response, 200, {error:false, success: true, msg: responseMsg});
-					}
-					
+					}	
 				});	
 
+
+		    }
+				
+		});
 	}
+
+	
 
 
 	deletePrivateConvo(sender, recipient, response)
@@ -290,130 +262,175 @@ export default class chatAppDb
 	
 
 	
-
+		
 	//adds a message to the privateConvo
-	addMessage(sender, recipient, msg,response, socketDic)
+	addMessage(sender, recipient, msg,response, socketDic,swapped, callback)
 	{
-		
-
-		debugger;
-		const dateTime = myUtil.getDateAndTime();
-		console.log("DateTime: "+dateTime.date);
-		console.log("args: "+sender+", "+recipient+", "+msg);
-
-		const newMsg = new message({
-					date: dateTime.date,
-					time: dateTime.time,
-					sender: sender,
-					text: msg
-		});
-
-		//capture scope
 		const that = this;
+		//printing arguments
+		console.log("args: ",sender, recipient, msg,response, socketDic);
 		
-		//add message to the user's convo thread
-		userPrivateConvos.findById(sender,function(err,senderDoc){
+		
+		//check if recipient exists, if not send error
+		users.count({_id: recipient}, function (err, count){ 
+		    debugger;
+		    if(!(count>0))
+		    {
+		        const responseMsg = "The recipient: "+recipient+" does not exist";
+		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
+		    }
+		    //if recipient exists, continue
+		    else
+		    {
+				 debugger;
+				//search for sender in userPrivateConvos Schema
+				userPrivateConvos.findById(sender,function(err,senderDoc){
 
-				debugger;
-				console.log(("err: "+JSON.stringify(err,null,3)+"\n doc: "+JSON.stringify(senderDoc,null,3)).bgBlack);
 
-				if(senderDoc != null && err == null)
-				{
+					const dateTime = myUtil.getDateAndTime();
+					
+					
+				
+					
 
-					const result = _.findWhere(senderDoc.privateConvos, {recipientId: recipient});
-					if(typeof result != 'undefined')
-					{
-						result.messages.push(newMsg);
-						console.log(JSON.stringify(result).black.bgWhite);
-						
-						
-								//send message to the recipient's convo thread
-								userPrivateConvos.findById(recipient,function(err,recipientDoc){
+						debugger;
+						console.log(("err: "+JSON.stringify(err,null,3)+"\n doc: "+JSON.stringify(senderDoc,null,3)).bgBlack);
+
+						//doc error handling, check if user exists, if does, check if user's PrivateConvo Exists between recipient and sender
+						if(senderDoc != null && err == null)
+						{
+
+							//search for recipient in user's privateConvos
+							const result = _.findWhere(senderDoc.privateConvos, {recipientId: recipient});
+
+
+							//if recipient and sender have privateConvo, add message
+							if(typeof result != 'undefined')
+							{
+								debugger;
+
+								
+								//if sender & recipient has been reversed in param (for recursive call), put correct sender in object
+								if(swapped != null && swapped == true)
+								{
+									 	const newMsg = new message({
+										date: dateTime.date,
+										time: dateTime.time,
+										text: msg,
+										sender: recipient
+									});
+									 	result.messages.push(newMsg);
+									
+								}
+								else{
+										const newMsg = new message({
+										date: dateTime.date,
+										time: dateTime.time,
+										text: msg,
+										sender: sender
+									});
+										result.messages.push(newMsg);
+								}
+								
+								console.log(JSON.stringify(result).black.bgWhite);
+
+								
+								debugger;
+								//after newMsg push, save the 'result' (derived from userPrivateConvo Schema)
+								const shouldRespond = (swapped) ? response : null;
+								that.saveDb(senderDoc, shouldRespond, socketDic, function(){
 									debugger;
-									console.log(("err: "+JSON.stringify(err)+"\n doc: "+JSON.stringify(recipientDoc)).bgBlack);
 
-									if(recipientDoc != null && err == null)
+									//if we have added the msg to recipient's thread do that now
+									if(swapped == null)
 									{
-
-										const result = _.findWhere(recipientDoc.privateConvos, {recipientId: sender});
-										if(typeof result != 'undefined')
-										{
-											result.messages.push(newMsg);
-											console.log(JSON.stringify(result).black.bgWhite);
-											that.saveDb(senderDoc, null, that.saveDb(recipientDoc, response,null, socketDic),socketDic);
-										}
-										else if (typeof result == 'undefined')
-										{
-												//if recipient private convo does not exist, create it, insert message and save
-
-												
-												// privateConvo.findById(recipient, function(err,doc){
-													debugger;
-													
-													// doc.recipientId = sender;
-
-
-													const newConvo = new privateConvo({
-														_id: recipient,
-														recipientId: sender,
-													});
-
-													const newConvoWithMsg = new privateConvo({
-														_id: recipient,
-														recipientId: sender,
-														messages: [newMsg]
-													});
-
-													recipientDoc.privateConvos.push(newConvoWithMsg);
-
-													//save sender doc, newConvo doc & recipientDoc	
-													that.saveDb(newConvo, null, that.saveDb(recipientDoc,null, that.saveDb(senderDoc, response,null,socketDic), socketDic));
-
-												// });
-										}			
+										//dont send response to server, one has already been sent, THIS IS UNSAFE!
+										that.addMessage(recipient, sender, msg, response,socketDic, true);	
 									}
-									else if(err)
-									{
-										debugger;
-										const responseMsg = "ERROR: "+err;
-										that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
-									}
-									else if(recipientDoc == null)
-									{
-										debugger;
-										const responseMsg = "The User: "+recipient+" Does not Exist";
-										that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
-									}
+									
 								});
+								
+								
+										// //send message to the recipient's convo thread
+										// userPrivateConvos.findById(recipient,function(err,recipientDoc){
+										// 	debugger;
+										// 	console.log(("err: "+JSON.stringify(err)+"\n doc: "+JSON.stringify(recipientDoc)).bgBlack);
+
+										// 	//doc error handling, check if recipient exists, if does, check if user's PrivateConvo Exists between recipient and sender 
+										// 	if(recipientDoc != null && err == null)
+										// 	{
+
+										// 		//look for the sender inside of recipient's privateConvos
+										// 		const result = _.findWhere(recipientDoc.privateConvos, {recipientId: sender});
+										// 		if(typeof result != 'undefined')
+										// 		{
+										// 			result.messages.push(newMsg);
+										// 			console.log(JSON.stringify(result).black.bgWhite);
+
+										// 			that.saveDb(senderDoc, null, socketDic, function(){
+
+										// 				that.saveDb(recipientDoc, response,socketDic)
+										// 			});
+										// 		}
+										// 		else if (typeof result == 'undefined')
+										// 		{//if sender is not in recipient's privateConvos, create a private convo in userPrivateConvo Schema
+																
+														
+										// 			debugger;
 
 
-						
-					}	
-					else if (typeof result == 'undefined')
-					{
-							const responseMsg = "The recipient: "+recipient+" does not exist";
-							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg})
+										// 		}			
+										// 	}
+										// 	else if(err)
+										// 	{
+										// 		debugger;
+										// 		const responseMsg = "ERROR: "+err;
+										// 		that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
+										// 	}
+										// 	else if(recipientDoc == null)
+										// 	{
+										// 		debugger;
+										// 		const responseMsg = "The User: "+recipient+" Does not Exist";
+										// 		that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
+										// 	}
+										// });
+							}
+							//if sender and recipient do not have a private convo, create privateConvo in userPrivateConvo Schema
+							else if (typeof result == 'undefined')
+							{
+									
+									const responseMsg = "The recipient: "+recipient+" does not exist...creating convo";
+									debugger;
+									that.createPrivateConvo(sender, recipient,null,function(){
+										debugger;
 
-					}	
+										
+										//*** MARK SWAPPED FLAG TO AVOID WRONG SENDER ERROR!
+										that.addMessage(sender,recipient, msg, response, socketDic, true);
+										debugger;
+									});
+									// that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg})
+							}	
 
 
-						
-				}
-				else if(err)
-				{
-					debugger;
-					const responseMsg = "ERROR: "+err;
-					that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
-				}
-				else if(senderDoc == null)
-				{
-					debugger;
-					const responseMsg = "This User: "+sender+" does not Exist";
-					that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
-				}
-		});	
-	}
-
+								
+						}
+						else if(err)
+						{
+							debugger;
+							const responseMsg = "ERROR: "+err;
+							that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
+						}
+						else if(senderDoc == null)
+						{
+							debugger;
+							const responseMsg = "This User: "+sender+" does not Exist";
+							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
+						}
+				});	
+		    }
+		});
+}
 	//Sends a request to java server to encrpt data
 	encodeHelper(msgObj, response)
 	{
@@ -486,8 +503,9 @@ export default class chatAppDb
 	
 
 
-	saveDb(doc, response, callback, socketDic)
+	saveDb(doc, response, socketDic, callback)
 	{
+		debugger;
 		callNum++;
 		console.log("SaveDb DOC: "+JSON.stringify(doc));
 		const that = this;
@@ -498,6 +516,7 @@ export default class chatAppDb
 			const that = this;
 			//save dat
 			doc.save(function(err,newDoc){
+				debugger;
 				console.log(("call num: "+callNum+", NEW DOC FROM SAVE: "+newDoc).black.bgWhite);
 				//if save returns newDoc, print newDoc in magenta with black background to console
 			if(newDoc)
