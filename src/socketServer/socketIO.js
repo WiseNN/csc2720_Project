@@ -1,5 +1,5 @@
 import chatAppDb from '../mongoDb/db';
-
+import _ from 'underscore';
 
 
 
@@ -7,7 +7,7 @@ import chatAppDb from '../mongoDb/db';
 
 
 	const db = new chatAppDb();
-	var clients = new Object();
+	var clients = {};
 	// io.engine.generateId = (req) => {
 	//   return "custom:id:" + custom_id++; // custom id must be unique
 	// }
@@ -35,9 +35,10 @@ import chatAppDb from '../mongoDb/db';
 
 			});
 
-			socket.on('addMsg', function(req){
+			socket.on('addMsg', function(obj){
 				console.log("adding message...");	
-				db.addMessage(req.sender, req.recipient, req.msg, null, clients);
+				console.log("see: "+JSON.stringify(obj));
+				db.addMessage(obj.sender, obj.recipient, obj.msg, null,clients,null, null);
 			});
 
 			
@@ -45,15 +46,18 @@ import chatAppDb from '../mongoDb/db';
 			socket.on('disconnect', function(userId){
 
 				console.log(("user: "+userId+ "has been disconnect from their socket").yellow.bgBlack);
-				delete clients.userId;
+				delete clients[userId];
+				console.log(("(from disconnect) Connected Clients: "+Object.keys(clients)).yellow.bgBlack);
 
 			});
 
 			socket.on('disconnected', function(userId){
+				
 				console.log(("Whoa, "+userId+" left really fast!").yellow.bgBlack);
-					delete clients.userId;
+					delete clients[userId];
 				console.log(("user: "+userId+ " has been disconnect from their socket").yellow.bgBlack);
-				console.log(("Connected Clients: "+Object.keys(clients)).yellow.bgBlack);
+				console.log(("(from disconnected) Connected Clients: "+Object.keys(clients)).yellow.bgBlack);
+
 			
 			});
 

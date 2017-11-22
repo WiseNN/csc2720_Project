@@ -288,10 +288,6 @@ export default class chatAppDb
 
 
 					const dateTime = myUtil.getDateAndTime();
-					
-					
-				
-					
 
 						debugger;
 						console.log(("err: "+JSON.stringify(err,null,3)+"\n doc: "+JSON.stringify(senderDoc,null,3)).bgBlack);
@@ -336,6 +332,12 @@ export default class chatAppDb
 
 								
 								debugger;
+
+								//if a socketDicionary was sent, attactch the recipient to it
+								if(socketDic != null)
+								{
+									socketDic["tempRecipient"] = recipient;
+								}
 								//after newMsg push, save the 'result' (derived from userPrivateConvo Schema)
 								const shouldRespond = (swapped) ? response : null;
 								that.saveDb(senderDoc, shouldRespond, socketDic, function(){
@@ -350,50 +352,6 @@ export default class chatAppDb
 									
 								});
 								
-								
-										// //send message to the recipient's convo thread
-										// userPrivateConvos.findById(recipient,function(err,recipientDoc){
-										// 	debugger;
-										// 	console.log(("err: "+JSON.stringify(err)+"\n doc: "+JSON.stringify(recipientDoc)).bgBlack);
-
-										// 	//doc error handling, check if recipient exists, if does, check if user's PrivateConvo Exists between recipient and sender 
-										// 	if(recipientDoc != null && err == null)
-										// 	{
-
-										// 		//look for the sender inside of recipient's privateConvos
-										// 		const result = _.findWhere(recipientDoc.privateConvos, {recipientId: sender});
-										// 		if(typeof result != 'undefined')
-										// 		{
-										// 			result.messages.push(newMsg);
-										// 			console.log(JSON.stringify(result).black.bgWhite);
-
-										// 			that.saveDb(senderDoc, null, socketDic, function(){
-
-										// 				that.saveDb(recipientDoc, response,socketDic)
-										// 			});
-										// 		}
-										// 		else if (typeof result == 'undefined')
-										// 		{//if sender is not in recipient's privateConvos, create a private convo in userPrivateConvo Schema
-																
-														
-										// 			debugger;
-
-
-										// 		}			
-										// 	}
-										// 	else if(err)
-										// 	{
-										// 		debugger;
-										// 		const responseMsg = "ERROR: "+err;
-										// 		that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
-										// 	}
-										// 	else if(recipientDoc == null)
-										// 	{
-										// 		debugger;
-										// 		const responseMsg = "The User: "+recipient+" Does not Exist";
-										// 		that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
-										// 	}
-										// });
 							}
 							//if sender and recipient do not have a private convo, create privateConvo in userPrivateConvo Schema
 							else if (typeof result == 'undefined')
@@ -560,6 +518,7 @@ export default class chatAppDb
 	
 	sendJSONorSocketresponse(res, status, content,socketDic)
 	{
+		debugger;
 		if(res != null)
 		{
 			res.status(status);
@@ -569,11 +528,30 @@ export default class chatAppDb
 		else if(socketDic != null)
 		{
 			console.log("CALLED SOCKET-DIC!".green.bgBlack);
-			if(socketDic[content.obj._doc._id] != null)
+			const doc = content.obj._doc;
+			if(socketDic[doc._id] != null)
 			{
-				socketDic[content.obj._doc._id].emit('newMsg', content);
+				const result = _.findWhere(doc.privateConvos, {recipientId: socketDic["tempRecipient"]});
+				if(typeof result != "undefined")
+				{
+					content = result.messages[result.messages.length-1];
+					var myObj = {
+							sender: content.sender,
+							recipient: socketDic["tempRecipient"],
+   							text: content.text,
+   							time: content.time,
+   							date: content.date
+					};
+
+					
+					socketDic[doc._id].emit('newMsg', myObj);	
+				}else{
+					console.log("ERROR FROM sendJSONorSocketresponse() RECIPIENT WASNT FOUND MAJOR ERRROR!".red.bgWhite);
+				}
+
+				
 			}else{
-				console.log(("USER: "+content.obj._doc._id+" is not online").red.bgWhite);
+				console.log(("USER: "+doc._id+" is not online").red.bgWhite);
 			}
 			
 

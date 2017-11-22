@@ -25,7 +25,7 @@
 
 
     
-    // console.log("http://"+window.location.host, '/api/getMessages/', "WiseNN");
+    
     
     const url = createUrl(window.location.host, 'api/getMessages/', "WiseNN");
 
@@ -44,9 +44,14 @@ const createUrl = (host, path, params) =>
 const handleMouseUp = function(evt){
   console.log("event handled");
   const elm = document.getElementById("myTextBox");
+
+  if(elm.value == "")
+  {
+    return;
+  }
   console.log("Show me text: "+elm.value);
 
-  socket.emit('addMsg', );
+  socket.emit('addMsg', {sender: "WiseNN", recipient: "Nommel", msg: elm.value });
 
 };
 
@@ -102,11 +107,11 @@ const addMsg = (userId, recipientId, msgObj) =>
   var whichUser = "";
   if(userId == msgObj.sender)
   {
-    whichUser = "left";
+    whichUser = "right";
   }
   else if(recipientId == msgObj.sender)
   {
-    whichUser = "right";
+    whichUser = "left";
   }
 
   var frag = document.createDocumentFragment();
@@ -210,10 +215,15 @@ socket.on('disconnect', function(){
       msg: "Whats up, building the socket server now"
     };
 
-    socket.emit('addMessage', params);
+    
 
     socket.on('newMsg', function(data){
+      console.log("WE GOT A NEW MESSAGE!!!")
       console.log(JSON.stringify(data,null,3));
+      
+      const elmFrag = addMsg(data.sender, data.recipient, data);
+      const msgs = document.getElementById("msgsWrapper");
+      msgs.appendChild(elmFrag);
     });
 
       window.onbeforeunload = confirmExit;
