@@ -4,12 +4,13 @@
   {
     url = window.location.protocol+"//"+window.location.hostname+":"+window.location.port;
     socket = io(url);
+    console.log("url: "+url);
   }else{
     // url = window.location.protocol+"//"+window.location.hostname;
     socket = io();
   }
   console.log("socket: "+socket);
-  console.log("url: "+url);
+  
   // var socket = io.connect('http://mydomain.com/');
   
   document.addEventListener("DOMContentLoaded", function(event) {
