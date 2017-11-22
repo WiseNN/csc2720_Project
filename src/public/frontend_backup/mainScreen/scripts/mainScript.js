@@ -1,5 +1,5 @@
 
-  var url="";
+  var url="";debugger;
   if(window.location.port != "")
   {
     url = window.location.protocol+"//"+window.location.hostname+":"+window.location.port;
