@@ -1,5 +1,6 @@
 
-  const socket = io(createUrl(window.location.host));
+  const socket = io(window.location.protocol+"//"+window.location.hostname+":"+window.location.port);
+  console.log("url: "+window.location.protocol+"//"+window.location.hostname+":"+window.location.port);
   // var socket = io.connect('http://mydomain.com/');
   
   document.addEventListener("DOMContentLoaded", function(event) {
