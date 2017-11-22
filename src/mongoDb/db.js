@@ -518,6 +518,7 @@ export default class chatAppDb
 	
 	sendJSONorSocketresponse(res, status, content,socketDic)
 	{
+		console.log(("SOCKET-DIC: "+JSON.stringify(socketDic)).green.bgBlack);
 		debugger;
 		if(res != null)
 		{
@@ -525,7 +526,6 @@ export default class chatAppDb
 			res.json(content);
 				
 		}
-			console.log(("SOCKET-DIC: "+socketDic).green.bgBlack);
 		else if(socketDic != null)
 		{
 			console.log("CALLED SOCKET-DIC!".green.bgBlack);
