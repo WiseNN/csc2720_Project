@@ -1,5 +1,5 @@
 
-  const socket = io('http://localhost:3300');
+  const socket = io(createUrl(window.location.host));
   // var socket = io.connect('http://mydomain.com/');
   
   document.addEventListener("DOMContentLoaded", function(event) {
