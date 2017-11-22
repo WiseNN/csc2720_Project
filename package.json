@@ -5,6 +5,7 @@
   "main": "src/server.js",
   "scripts": {
     "test": "test-run",
+    "debug": "node --inspect ./src/server.js",
     "start": "node src/server.js",
     "restart": "nodemon src/server.js"
   },
