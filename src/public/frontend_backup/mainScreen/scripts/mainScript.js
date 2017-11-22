@@ -50,7 +50,7 @@
 const createUrl = (host, path, params) =>
 {
   debugger;
-  return "http://"+host+"/"+path+params;
+  return window.location.protocol+"/"+path+params;
 }
 
 const handleMouseUp = function(evt){
