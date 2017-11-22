@@ -525,6 +525,7 @@ export default class chatAppDb
 			res.json(content);
 				
 		}
+			console.log(("SOCKET-DIC: "+socketDic).green.bgBlack);
 		else if(socketDic != null)
 		{
 			console.log("CALLED SOCKET-DIC!".green.bgBlack);
