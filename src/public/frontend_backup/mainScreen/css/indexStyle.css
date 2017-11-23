@@ -27,7 +27,7 @@
     overflow-y: auto;
     width: 30%;
     background-color: #A4AE1D;
-    background-image: url(http://localhost:3300/foodIcon.png);
+    background-image: url(/foodIcon.png);
     background-size: 72px;
 }
 
@@ -52,7 +52,7 @@
     margin-top: 1.4%;
     background-color: #ffa7db; /*#8cbeb1*/
     width: 98%;
-    height: 18%;
+    height: 19%;
     border-right: solid darkslategrey;
     border-bottom: solid darkslategrey;
     border-radius: 0px 10px 10px 0px;
@@ -79,6 +79,7 @@
     display: inline-block;
     height: auto;
     word-wrap: initial;
+    font-family: monospace;
     
 }
 .convoBoxText {
@@ -89,6 +90,7 @@
     line-height: 140%;
     padding-right: 3%;
     padding-left: 3%;
+    font-family: fantasy;
 }
 .divider{
     
@@ -194,6 +196,7 @@
     padding-right: 4%;
     padding-left: 7%;
     text-align: justify;
+    font-family: monospace;
 }
 .msgBubbleTxtRight {
     transform: scale(-1, 1);
@@ -220,7 +223,7 @@ display: block;
     max-width: 163px;
     /* margin-top: auto; */
     float: left;
-    background-image: url(http://localhost:3300/cameraIcon.svg);
+    background-image: url(/cameraIcon.svg);
     background-size: 54%;
     /* background-size: contain; */
     background-repeat: no-repeat;
@@ -263,7 +266,7 @@ display: block;
     /* margin-bottom: 0%; */
     /* height: 69%; */
     width: 10%;
-    background-image: url(http://localhost:3300/micIcon.png);
+    background-image: url(/micIcon.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 84%;
@@ -279,7 +282,7 @@ display: block;
     /* margin-bottom: 0%; */
     /* height: 69%; */
     width: 10%;
-    background-image: url(http://localhost:3300/encodeIcon.png);
+    background-image: url(/encodeIcon.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 123%;
@@ -294,7 +297,7 @@ display: block;
     /* margin-bottom: 0%; */
     /* height: 69%; */
     width: 10%;
-    background-image: url(http://localhost:3300/sendIcon.png);
+    background-image: url(/sendIcon.png);
     background-repeat: no-repeat;
     background-position: center;
     background-size: 82%;
