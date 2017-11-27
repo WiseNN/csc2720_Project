@@ -278,13 +278,12 @@ export default class chatAppDb
 		users.count({_id: recipient}, function (err, count){ 
 		    debugger;
 		    if(!(count>0))
-		    	console.log("cancelling trip...");
 		    {
+		    	console.log("cancelling trip...");
 		        const responseMsg = "The recipient: "+recipient+" does not exist";
 		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 		    }
-		    //if recipient exists, continue
-		    else
+		    else //if recipient exists, continue
 		    {
 				 debugger;
 				 console.log("trip 1");
