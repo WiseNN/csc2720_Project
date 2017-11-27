@@ -274,7 +274,7 @@ export default class chatAppDb
 		//if a socketDicionary was sent, attactch the recipient to it
 		if(socketDic != null)
 		{
-			console.log("ASSIGNED SENDER TO DICTIONARY!!");
+			console.log("ASSIGNED RECIPIENT TO DICTIONARY!!");
 
 			socketDic["tempRecipient"] = recipient;
 		}
