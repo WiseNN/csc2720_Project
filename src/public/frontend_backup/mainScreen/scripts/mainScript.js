@@ -230,12 +230,21 @@ socket.on('disconnect', function(){
     
 
     socket.on('newMsg', function(data){
-      console.log("WE GOT A NEW MESSAGE!!!")
-      console.log(JSON.stringify(data,null,3));
       
-      const elmFrag = addMsg(data.sender, data.recipient, data);
-      const msgs = document.getElementById("msgsWrapper");
-      msgs.appendChild(elmFrag);
+      if(data.success)
+      {
+        console.log("WE GOT A NEW MESSAGE!!!")
+        console.log(JSON.stringify(data,null,3));
+        
+        const elmFrag = addMsg(data.sender, data.recipient, data);
+        const msgs = document.getElementById("msgsWrapper");
+        msgs.appendChild(elmFrag);  
+      }
+      else if(data.error)
+      {
+        throw data.errorMsg;
+      }
+      
     });
 
       window.onbeforeunload = confirmExit;

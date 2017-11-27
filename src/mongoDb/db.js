@@ -271,7 +271,13 @@ export default class chatAppDb
 		console.log("args: ",sender, recipient, msg,response, socketDic);
 		console.log("trip starting...");
 		
-		
+		//if a socketDicionary was sent, attactch the recipient to it
+		if(socketDic != null)
+		{
+			console.log("ASSIGNED SENDER TO DICTIONARY!!");
+
+			socketDic["tempRecipient"] = recipient;
+		}
 		
 
 		//check if recipient exists, if not send error
@@ -281,7 +287,24 @@ export default class chatAppDb
 		    {
 		    	console.log("cancelling trip...");
 		        const responseMsg = "The recipient: "+recipient+" does not exist";
+		        const myObj = {
+		        	error: true,
+		        	errorMsg: responseMsg,
+		        	success: false
+		        };
+		        	//if sender's socket is still connected, send error response to client
+		        	if(socketDic[sender] != null)
+		        	{
+		        		socketDic[sender].emit("newMsg", myObj);
+		        	}
+		        	else{ //if not, log that sender is not connected error
+		        		const responseMsg = "Sender's socket is not connected anymore? Why? ";
+		        		throw responseMsg;
+		        		console.log(responseMsg.red.bgWhite);
+		        	}
+		        	
 		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
+		        
 		    }
 		    else //if recipient exists, continue
 		    {
@@ -344,13 +367,7 @@ export default class chatAppDb
 								
 								debugger;
 
-								//if a socketDicionary was sent, attactch the recipient to it
-								if(socketDic != null)
-								{
-									console.log("ASSIGNED SENDER TO DICTIONARY!!");
-		
-									socketDic["tempRecipient"] = recipient;
-								}
+								
 								//after newMsg push, save the 'result' (derived from userPrivateConvo Schema)
 								const shouldRespond = (swapped) ? response : null;
 								that.saveDb(senderDoc, shouldRespond, socketDic, function(){
@@ -554,17 +571,34 @@ export default class chatAppDb
 		}
 		else if(socketDic != null)
 		{
-			
+			console.log("trip 21.a");
 			console.log("CALLED SOCKET-DIC!".green.bgBlack);
+			//get id of sender
 			const doc = content.obj._doc;
+
+			//if sender is online (in the socketDictionary), see if recipient is online & send socResponse to client (to update view)
 			if(socketDic[doc._id] != null)
 			{
+
+
 				console.log("trip 21");
+
+				
+				//look for recipient's id in sender's list of privateConvos (get their convo)
 				const result = _.findWhere(doc.privateConvos, {recipientId: socketDic["tempRecipient"]});
+				
+				//if convo found, check if recipient is online, send response to sender
 				if(typeof result != "undefined")
 				{
+					console.log("trip 21.b.a");
+
 					content = result.messages[result.messages.length-1];
+
+					//create message response for both parties
 					var myObj = {
+							success: true,
+							error: null,
+							errorMsg: "",
 							sender: content.sender,
 							recipient: socketDic["tempRecipient"],
    							text: content.text,
@@ -572,15 +606,37 @@ export default class chatAppDb
    							date: content.date
 					};
 
+					//commented because recursive call to addMessage takes care of calling the recipient's socket
+					// //check if recipient is online, if so, send response to recipient's client
+					// if(socketDic[socketDic["tempRecipient"]] != null)
+					// {
+					// 	socketDic[socketDic["tempRecipient"]].emit("newMsg", myObj);
+					// }
+					// else{//if not, log message to console
+					// 	console.log("recipient "+socketDic["tempRecipient"]+" is not online");
+					// }
+
+					
 					console.log("trip 22");	
+
+					//sending message to sender's client
 					socketDic[doc._id].emit('newMsg', myObj);	
-				}else{
+				}
+				else{//if convo not found log an error 
 						console.log("trip 23");	
 					console.log("ERROR FROM sendJSONorSocketresponse() RECIPIENT WASNT FOUND MAJOR ERRROR!".red.bgWhite);
+
+					const myObj = {
+						error: true,
+						errorMsg: "Conversation between sender: "+doc._id+" and recipient: "+socketDic["tempRecipient"]+" was not found",
+						success: false
+					};
+					socketDic[doc._id].emit('newMsg', myObj);	
 				}
 
 				
-			}else{
+			}
+			else{//if sender is not online, log message
 
 				console.log(("USER: "+doc._id+" is not online").red.bgWhite);
 			}
