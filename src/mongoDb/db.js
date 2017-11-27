@@ -269,6 +269,7 @@ export default class chatAppDb
 		const that = this;
 		//printing arguments
 		console.log("args: ",sender, recipient, msg,response, socketDic);
+		console.log("trip starting...");
 		
 		
 		
@@ -277,6 +278,7 @@ export default class chatAppDb
 		users.count({_id: recipient}, function (err, count){ 
 		    debugger;
 		    if(!(count>0))
+		    	console.log("cancelling trip...");
 		    {
 		        const responseMsg = "The recipient: "+recipient+" does not exist";
 		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
@@ -541,6 +543,7 @@ export default class chatAppDb
 	sendJSONorSocketresponse(res, status, content,socketDic)
 	{
 		console.log("trip 19");
+
 		console.log(("SOCKET-DIC: "+socketDic).green.bgBlack);
 		debugger;
 		if(res != null)
@@ -579,14 +582,14 @@ export default class chatAppDb
 
 				
 			}else{
-				
+
 				console.log(("USER: "+doc._id+" is not online").red.bgWhite);
 			}
 			
 
 		}
 		else{
-			console.warn("No JSON response was sent in call".red.bgYellow);
+			console.warn("No JSON or SOCKET response was sent in call".red.bgYellow);
 		}
 		
 		

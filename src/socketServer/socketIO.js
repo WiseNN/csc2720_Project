@@ -36,7 +36,7 @@ import _ from 'underscore';
 			});
 
 			socket.on('addMsg', function(obj){
-				console.log("adding message...");	
+				console.log("adding message from socket.io on Server...");	
 				console.log("see: "+JSON.stringify(obj));
 				db.addMessage(obj.sender, obj.recipient, obj.msg, null,clients,null, null);
 			});
