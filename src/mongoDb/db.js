@@ -296,6 +296,8 @@ export default class chatAppDb
 		        	if(socketDic[sender] != null)
 		        	{
 		        		console.log("trip cancelled.a");
+
+		        		
 		        		socketDic[sender].emit("newMsg", myObj);
 		        	}
 		        	else{ //if not, log that sender is not connected error
@@ -310,8 +312,9 @@ export default class chatAppDb
 		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 		        
 		    }
-		    else //if recipient exists, continue
-		    {
+		    else
+		    { //if recipient exists, continue
+		    
 				 debugger;
 				 console.log("trip 1");
 				//search for sender in userPrivateConvos Schema
@@ -426,7 +429,7 @@ export default class chatAppDb
 				});	
 		    }
 		});
-}
+	}
 	//Sends a request to java server to encrpt data
 	encodeHelper(msgObj, response)
 	{
@@ -650,9 +653,16 @@ export default class chatAppDb
 		else{
 			console.warn("No JSON or SOCKET response was sent in call".red.bgYellow);
 		}
+
+		console.log("trip 24");
+		
+		if(socketDic != null && typeof socketDic["tempRecipient"] != null)
+		{
+			delete socketDic["tempRecipient"];
+		}
 		
 		
-	};
+	}
 }
 
 const db1 = new chatAppDb();

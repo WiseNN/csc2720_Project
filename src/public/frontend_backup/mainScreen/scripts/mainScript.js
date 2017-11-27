@@ -229,7 +229,8 @@ socket.on('disconnect', function(){
 
     
 
-    socket.on('newMsg', function(data){
+    socket.on('newMsg', function(data)
+    {
       debugger;
       if(data.success)
       {
@@ -243,6 +244,8 @@ socket.on('disconnect', function(){
       else if(data.error)
       {
         throw data.errorMsg;
+        console.warn(data.errorMsg);
+        console.log("data.errorMsg");
       }
       
     });

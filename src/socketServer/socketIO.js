@@ -15,7 +15,7 @@ import _ from 'underscore';
 	module.exports = function(io)
 	{
 			io.on('connection', function(socket){
-
+socket.emit("newMsg", "Hey");
 	
 
 			socket.on('addCustomId',function(newId){
