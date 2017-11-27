@@ -271,6 +271,8 @@ export default class chatAppDb
 		console.log("args: ",sender, recipient, msg,response, socketDic);
 		
 		
+		
+
 		//check if recipient exists, if not send error
 		users.count({_id: recipient}, function (err, count){ 
 		    debugger;
@@ -283,9 +285,12 @@ export default class chatAppDb
 		    else
 		    {
 				 debugger;
+				 console.log("trip 1");
 				//search for sender in userPrivateConvos Schema
 				userPrivateConvos.findById(sender,function(err,senderDoc){
 
+						console.log("trip 2");
+		
 
 					const dateTime = myUtil.getDateAndTime();
 
@@ -295,7 +300,8 @@ export default class chatAppDb
 						//doc error handling, check if user exists, if does, check if user's PrivateConvo Exists between recipient and sender
 						if(senderDoc != null && err == null)
 						{
-
+							console.log("trip 3");
+		
 							//search for recipient in user's privateConvos
 							const result = _.findWhere(senderDoc.privateConvos, {recipientId: recipient});
 
@@ -304,11 +310,13 @@ export default class chatAppDb
 							if(typeof result != 'undefined')
 							{
 								debugger;
+								console.log("trip 4");
+		
 
 								
 								//if sender & recipient has been reversed in param (for recursive call), put correct sender in object
 								if(swapped != null && swapped == true)
-								{
+								{		console.log("SWAPPED SENDER & RECIPIENT!!");
 									 	const newMsg = new message({
 										date: dateTime.date,
 										time: dateTime.time,
@@ -319,6 +327,8 @@ export default class chatAppDb
 									
 								}
 								else{
+										console.log("NOT SWAPPED SENDER & RECIPIENT");
+
 										const newMsg = new message({
 										date: dateTime.date,
 										time: dateTime.time,
@@ -336,6 +346,8 @@ export default class chatAppDb
 								//if a socketDicionary was sent, attactch the recipient to it
 								if(socketDic != null)
 								{
+									console.log("ASSIGNED SENDER TO DICTIONARY!!");
+		
 									socketDic["tempRecipient"] = recipient;
 								}
 								//after newMsg push, save the 'result' (derived from userPrivateConvo Schema)
@@ -343,9 +355,11 @@ export default class chatAppDb
 								that.saveDb(senderDoc, shouldRespond, socketDic, function(){
 									debugger;
 
+									console.log("trip 6");
 									//if we have added the msg to recipient's thread do that now
 									if(swapped == null)
 									{
+										console.log("trip 7");
 										//dont send response to server, one has already been sent, THIS IS UNSAFE!
 										that.addMessage(recipient, sender, msg, response,socketDic, true);	
 									}
@@ -356,12 +370,12 @@ export default class chatAppDb
 							//if sender and recipient do not have a private convo, create privateConvo in userPrivateConvo Schema
 							else if (typeof result == 'undefined')
 							{
-									
+									console.log("trip 8");
 									const responseMsg = "The recipient: "+recipient+" does not exist...creating convo";
 									debugger;
 									that.createPrivateConvo(sender, recipient,null,function(){
 										debugger;
-
+										console.log("trip 9");
 										
 										//*** MARK SWAPPED FLAG TO AVOID WRONG SENDER ERROR!
 										that.addMessage(sender,recipient, msg, response, socketDic, true);
@@ -375,12 +389,14 @@ export default class chatAppDb
 						}
 						else if(err)
 						{
+							console.log("trip 10");
 							debugger;
 							const responseMsg = "ERROR: "+err;
 							that.sendJSONorSocketresponse(response, 400, {error:true, success:false, msg:responseMsg});
 						}
 						else if(senderDoc == null)
 						{
+							console.log("trip 11");
 							debugger;
 							const responseMsg = "This User: "+sender+" does not Exist";
 							that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
@@ -463,6 +479,7 @@ export default class chatAppDb
 
 	saveDb(doc, response, socketDic, callback)
 	{
+		console.log("trip 12");
 		debugger;
 		callNum++;
 		console.log("SaveDb DOC: "+JSON.stringify(doc));
@@ -470,15 +487,17 @@ export default class chatAppDb
 		//if doc is not undefined/null
 		if(typeof doc != null)
 		{
-
+			console.log("trip 13");
 			const that = this;
 			//save dat
 			doc.save(function(err,newDoc){
+				console.log("trip 14");
 				debugger;
 				console.log(("call num: "+callNum+", NEW DOC FROM SAVE: "+newDoc).black.bgWhite);
 				//if save returns newDoc, print newDoc in magenta with black background to console
 			if(newDoc)
 				{
+					console.log("trip 15");
 					const responseMsg = "Updated "+doc.constructor.modelName+" Database";
 					
 					console.log((responseMsg+": "+JSON.stringify(newDoc, null, 3)).magenta.bgBlack);
@@ -488,6 +507,7 @@ export default class chatAppDb
 
 					if(callback != null)
 					{
+						console.log("trip 16");
 						callback();
 					}	
 
@@ -495,6 +515,7 @@ export default class chatAppDb
 				}//if save error, print error 
 				else if(err)
 				{
+					console.log("trip 17");
 					const responseMsg = "There was an error updating an item. ERORR: "+err;
 
 					console.log((responseMsg).red.bgWhite);
@@ -504,6 +525,7 @@ export default class chatAppDb
 				}
 			});	
 		}else{
+				console.log("trip 18");
 				const responseMsg = "CANNOT SAVE DOCUMENT FOR"+ doc.constructor.modelName;
 				
 				console.log((responseMsg).red);
@@ -518,20 +540,24 @@ export default class chatAppDb
 	
 	sendJSONorSocketresponse(res, status, content,socketDic)
 	{
+		console.log("trip 19");
 		console.log(("SOCKET-DIC: "+socketDic).green.bgBlack);
 		debugger;
 		if(res != null)
 		{
+			console.log("trip 20");
 			res.status(status);
 			res.json(content);
 				
 		}
 		else if(socketDic != null)
 		{
+			
 			console.log("CALLED SOCKET-DIC!".green.bgBlack);
 			const doc = content.obj._doc;
 			if(socketDic[doc._id] != null)
 			{
+				console.log("trip 21");
 				const result = _.findWhere(doc.privateConvos, {recipientId: socketDic["tempRecipient"]});
 				if(typeof result != "undefined")
 				{
@@ -544,14 +570,16 @@ export default class chatAppDb
    							date: content.date
 					};
 
-					
+					console.log("trip 22");	
 					socketDic[doc._id].emit('newMsg', myObj);	
 				}else{
+						console.log("trip 23");	
 					console.log("ERROR FROM sendJSONorSocketresponse() RECIPIENT WASNT FOUND MAJOR ERRROR!".red.bgWhite);
 				}
 
 				
 			}else{
+				
 				console.log(("USER: "+doc._id+" is not online").red.bgWhite);
 			}
 			
