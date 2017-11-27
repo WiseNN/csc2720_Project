@@ -303,8 +303,9 @@ export default class chatAppDb
 		        	else{ //if not, log that sender is not connected error
 		        		console.log("trip cancelled.b");
 		        		const responseMsg = "Sender's socket is not connected anymore? Why? ";
-		        		throw responseMsg;
 		        		console.log(responseMsg.red.bgWhite);
+		        		throw responseMsg;
+		        		
 		        	}
 
 		        	

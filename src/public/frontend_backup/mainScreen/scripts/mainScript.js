@@ -243,9 +243,10 @@ socket.on('disconnect', function(){
       }
       else if(data.error)
       {
-        throw data.errorMsg;
         console.warn(data.errorMsg);
         console.log("data.errorMsg");
+        throw data.errorMsg;
+        
       }
       
     });
