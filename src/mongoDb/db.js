@@ -295,11 +295,11 @@ export default class chatAppDb
 		        	//if sender's socket is still connected, send error response to client
 		        	if(socketDic[sender] != null)
 		        	{
-		        		console.Log("trip cancelled.a");
+		        		console.log("trip cancelled.a");
 		        		socketDic[sender].emit("newMsg", myObj);
 		        	}
 		        	else{ //if not, log that sender is not connected error
-		        		console.Log("trip cancelled.b");
+		        		console.log("trip cancelled.b");
 		        		const responseMsg = "Sender's socket is not connected anymore? Why? ";
 		        		throw responseMsg;
 		        		console.log(responseMsg.red.bgWhite);
