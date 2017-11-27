@@ -293,12 +293,12 @@ export default class chatAppDb
 		        	success: false
 		        };
 		        	//if sender's socket is still connected, send error response to client
-		        	if(socketDic[sender] != null)
+		        	if(socketDic != null && socketDic[sender] != null)
 		        	{
 		        		console.log("trip cancelled.a");
 
 		        		
-		        		socketDic["WiseNN"].emit("newMsg", myObj);
+		        		socketDic[sender].emit("newMsg", myObj);
 		        	}
 		        	else{ //if not, log that sender is not connected error
 		        		console.log("trip cancelled.b");
