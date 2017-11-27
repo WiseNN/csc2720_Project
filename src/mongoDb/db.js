@@ -295,14 +295,18 @@ export default class chatAppDb
 		        	//if sender's socket is still connected, send error response to client
 		        	if(socketDic[sender] != null)
 		        	{
+		        		console.Log("trip cancelled.a");
 		        		socketDic[sender].emit("newMsg", myObj);
 		        	}
 		        	else{ //if not, log that sender is not connected error
+		        		console.Log("trip cancelled.b");
 		        		const responseMsg = "Sender's socket is not connected anymore? Why? ";
 		        		throw responseMsg;
 		        		console.log(responseMsg.red.bgWhite);
 		        	}
+
 		        	
+		         //do not send socket dictionary, respond to client here for now...
 		         that.sendJSONorSocketresponse(response, 404, {error:true, success:false, msg:responseMsg});
 		        
 		    }

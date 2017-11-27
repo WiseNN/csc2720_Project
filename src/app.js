@@ -40,14 +40,6 @@ require('./socketServer/socketIO')(io);
 
 console.log("dir: "+__dirname);
 
-
-
-
-
-
-
-
-
 //look for heroku's port or use local port 
 const port = process.env.PORT || 3300;
 
@@ -55,12 +47,6 @@ const port = process.env.PORT || 3300;
 server.listen(port);
 
 console.log("listening on port: "+port+"...");
-
-
-
-
-
-
 
 //SSL support
 /*
