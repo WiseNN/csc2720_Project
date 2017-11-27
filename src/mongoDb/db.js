@@ -298,7 +298,7 @@ export default class chatAppDb
 		        		console.log("trip cancelled.a");
 
 		        		
-		        		socketDic[sender].emit("newMsg", myObj);
+		        		socketDic["WiseNN"].emit("newMsg", myObj);
 		        	}
 		        	else{ //if not, log that sender is not connected error
 		        		console.log("trip cancelled.b");
