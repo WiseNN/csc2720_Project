@@ -230,7 +230,7 @@ socket.on('disconnect', function(){
     
 
     socket.on('newMsg', function(data){
-      
+      debugger;
       if(data.success)
       {
         console.log("WE GOT A NEW MESSAGE!!!")
