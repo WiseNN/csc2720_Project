@@ -40,7 +40,8 @@
      
 
     //if either param is empty, do not bring up user's thread
-    if(me == "" || you == "")
+
+    if(me == "" || you == "" || me == null || you == null)
     {
 
       me = ""; you = "";
