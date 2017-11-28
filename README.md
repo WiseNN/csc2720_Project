@@ -16,8 +16,33 @@ We are building a Web Chat Application that will contain a smooth user interface
     </li>    
 </ul>
 
+<i> SideNote: Documentation and maintenance for the <b>Java Encryption Server</b> is currently being maintained in a seperate repository. If you are here for that, please see the <a href="https://github.com/WiseNN/javaChatDataServer">javaChatDataServer</a> repo. </i>
+
 <hr />
+
+
 <h2>Documentation</h2>
+
+
+
+<h3>Client-Side Usage</h3>
+The UI is Currently in BETA 1 testing phase, and does not have all of the visual features that would complement using the Private Messenger. Therefore, there are certain guidelines to use it until more UI has been added.<b>Currently, this application is experiencing bugs in the Safari browser. This issue is being investigated.</b>
+
+<ul>
+<li>
+<h4>Initial Load: </h4> The landing page: <code>https://chatappproject.herokuapp.com</code>, load a blank chat interface, simply because no user or recipient has been entered into the search query parameters of the URL. This is not an error.
+</li>
+<li><h4>Adding A User: </h4> To add a user to the private messenger you must download <a href="https://www.getpostman.com">Postman </a>, and send a <b>POST</b> request to the url: <b><code>[domain]/api/users/createUser/:userId</code></b>. Remember to add the sender, and recipient user. 
+</li>
+<li>
+<h4>Starting a Chat: </h4> In order to start a chat between two users, you must type both users into the corresponding query parameters: user, recipient of the url address: <code>https://chatappproject.herokuapp.com?user=<b>senderId</b>&recipient=<b>recipientId</b></code>
+</li>
+<li>
+<h4>Mobile Usage: </h4> While you are able to load the chat website on a mobile device, because it is not configured for touch events the send button will not respond, rendering the application unusable on mobile platforms. This will soon change with an update, but is currently the case.
+</li>
+</ul>
+
+
 
 <h3>Messaging API: [type of api method call] </h3>
 
