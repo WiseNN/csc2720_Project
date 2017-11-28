@@ -16,7 +16,11 @@ We are building a Web Chat Application that will contain a smooth user interface
     </li>    
 </ul>
 
+<i> SideNote: Documentation and maintenance for the <b>Java Encryption Server</b> is currently being maintained in a seperate repository. If you are here for that, please see the <a href="https://github.com/WiseNN/javaChatDataServer">javaChatDataServer</a> repo. </i>
+
 <hr />
+
+
 <h2>Documentation</h2>
 
 
