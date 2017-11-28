@@ -28,3 +28,12 @@ writing in db.js, methods for CRUD in the Database; stopping point has been reac
 	- Step After: 
 		- Write a way to remove/delete messages, 
 		- Go back and review all functions, write an ErrorHandler function to report errors to users & server admin, think about a way to scramble the user messages if they should be return scrambled (this is really a job for the front end, scrambled msgs will not be stored in db, but we can share algo. with the front-end devs)
+
+
+11/19/2017 -- 3:29am -NW-
+---------------------
+writing documentation for the API. 
+	- Issues: Ran into a hiccup when testing the last route to add a message, to the database. Basically, we can't retrieve a privateConvo document when looking for it, because we are trying to use the findOne() mongoose method on a subdocument; which is not allowed. I purposefully did not save the privateconvos schema, beucase I only wanted to track & index them through the userPrivateConvos schema. When trying to solve this problem, I realized that an API cannot send information to a client (without the client polling the server). Considering the nature of this app, this is terrible. I now have to implement some form of a socket in order to simplify this development cycle. Getting lost in my thoughts a little. 
+	- Next Step: 
+		1) I need to find a way to save messages to the database, and store them based on a 	timestamp key (ObjectId).
+		2) Then figure out our socket implementation. I only need a socket for chatting, 

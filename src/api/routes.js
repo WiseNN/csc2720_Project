@@ -15,6 +15,14 @@ router.post("/users/createUser/:userId", (req,res) => {
 	
 });
 
+router.delete("/users/removeUser/:userId", (req,res) => {
+	
+	console.log("params: "+JSON.stringify(req.params));
+	//attempts to add user to db, will send response to client
+	db.removeUser(req.params.userId, res);
+	
+});
+
 //add voice recognition Id
 router.put("/users/voiceRecognition/:userId/:voiceId", (req,res) => {
 
@@ -26,9 +34,23 @@ router.put("/users/voiceRecognition/:userId/:voiceId", (req,res) => {
 //creates a private convo with the sender & recipient
 router.post("/privateChat/createConvo/:userId/:recipeintId", (req,res) => {
 
+
 	db.createPrivateConvo(req.params.userId,req.params.recipeintId, res);
-	
+
 });
+
+router.delete("/privateChat/deleteConvo/:userId/:recipeintId", (req,res) => {
+
+	db.deletePrivateConvo(req.params.userId,req.params.recipeintId, res);
+
+});
+
+
+router.get("encodeHelper/:msgs", (req, res) => {
+
+	db.encodeHelper(req.params.msgs, res);
+});
+
 
 
 //add message to a private chat
@@ -36,9 +58,18 @@ router.post("/privateChat/createConvo/:userId/:recipeintId", (req,res) => {
 
 router.put("/privateChat/addMessage/:userId/:recipientId/:message", (req,res) => {
 	
-	console.log("params: "+req.message);
-	db.addMessage(req.params.userId, req.params.recipeintId, req.params.message, res);
+	console.log("params from routes: "+req.params.message);
+
+	
+	db.addMessage(req.params.userId, req.params.recipientId, req.params.message, res);
+
+	
 });
+
+router.get("/getMessages/:userId", (req, res) => {
+	db.readDb(null, req.params.userId, res);
+});
+
 
 
 

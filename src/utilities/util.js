@@ -6,11 +6,13 @@ export default class Util
 		{
 		//create date object
 		const date = new Date();
+debugger;
+		console.log(("PURE GREENWITCH TIME: "+date).green.bgBlack);
 
 		//get month, day & year to create a formatted Date string
 		var month = "";
-		const day = date.getDay();
-		const year = date.getYear();
+		const day = date.toDateString().substring(8,10);
+		const year = date.getFullYear();
 
 		//get hour, min. & sec. to create formateed Time string
 		const hour = date.getHours();
@@ -37,7 +39,8 @@ export default class Util
 
 		//formatted Date & Time String ***DO NOT MODIFY***
 		const formattedDate_Str = month+" "+day+", "+year;
-		const formattedTime_Str = hour+":"+minutes+":"+seconds;
+		// const formattedTime_Str = hour+":"+minutes+":"+seconds;
+		const formattedTime_Str = date.toString().substring(15);
 		
 		
 
