@@ -24,23 +24,30 @@
   });
 
 
-
-
+//add username to the ?user=[username] & ?recipient=[recipientUsername] query param to get a specific user's message box
+    var url2 = new URL(window.location.href);
+    var me = "";url2.searchParams.get("user");
+    var you = "";url2.searchParams.get("recipient");
+  
   window.onload = () =>
   {
 
-    //add username to the ?user=[username] query param to get a specific user's message box
-    var url2 = new URL(window.location.href);
-    const user = url2.searchParams.get("user");
-     
 
      debugger;
 
+     me = url2.searchParams.get("user");
+     you = url2.searchParams.get("recipient");
+     
 
-    
-    
-    
-    const url = createUrl(window.location.host, 'api/getMessages/', user);
+    //if either param is empty, do not bring up user's thread
+    if(me == "" || you == "")
+    {
+
+      me = ""; you = "";
+    }
+
+  
+    const url = createUrl(window.location.host, 'api/getMessages/', me);
 
      $.ajax({url: url, async: true, success: function(result){
             debugger;
@@ -64,8 +71,8 @@ const handleMouseUp = function(evt){
     return;
   }
   console.log("Show me text: "+elm.value);
-
-  socket.emit('addMsg', {sender: "WiseNN", recipient: "Nommel", msg: elm.value });
+debugger;
+  socket.emit('addMsg', {sender: me, recipient: you, msg: elm.value });
 
 };
 
@@ -219,18 +226,9 @@ socket.on('disconnect', function(){
   socket.on('connect', function(){
 
     
-    socket.emit('addCustomId', "WiseNN");
+    socket.emit('addCustomId', me);
 
     
-
-      const params = {
-      sender: "WiseNN",
-      recipient: "TaslimD",
-      msg: "Whats up, building the socket server now"
-    };
-
-    
-
     socket.on('newMsg', function(data)
     {
       debugger;
@@ -239,7 +237,7 @@ socket.on('disconnect', function(){
         console.log("WE GOT A NEW MESSAGE!!!")
         console.log(JSON.stringify(data,null,3));
         
-        const elmFrag = addMsg(data.sender, data.recipient, data);
+        const elmFrag = addMsg(me, you, data);
         const msgs = document.getElementById("msgsWrapper");
         msgs.appendChild(elmFrag);  
       }
@@ -257,7 +255,7 @@ socket.on('disconnect', function(){
   
       function confirmExit()
       {
-        socket.emit('disconnected', 'WiseNN');
+        socket.emit('disconnected', me);
       }
   });
   
