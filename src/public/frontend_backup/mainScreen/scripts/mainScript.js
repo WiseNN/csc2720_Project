@@ -29,7 +29,9 @@
   window.onload = () =>
   {
 
-
+    //add username to the ?user=[username] query param to get a specific user's message box
+    var url2 = new URL(window.location.href);
+    const user = url2.searchParams.get("user");
      
 
      debugger;
@@ -38,7 +40,7 @@
     
     
     
-    const url = createUrl(window.location.host, 'api/getMessages/', "WiseNN");
+    const url = createUrl(window.location.host, 'api/getMessages/', user);
 
      $.ajax({url: url, async: true, success: function(result){
             debugger;
