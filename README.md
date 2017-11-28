@@ -26,7 +26,8 @@ We are building a Web Chat Application that will contain a smooth user interface
 
 
 <h3>Client-Side Usage</h3>
-The UI is Currently in BETA 1 testing phase, and does not have all of the visual features that would complement using the Private Messenger. Therefore, there are certain guidelines to use it until more UI has been added.
+The UI is Currently in BETA 1 testing phase, and does not have all of the visual features that would complement using the Private Messenger. Therefore, there are certain guidelines to use it until more UI has been added.<b>Currently, this application is experiencing bugs in the Safari browser. This issue is being investigated.</b>
+
 <ul>
 <li>
 <h4>Initial Load: </h4> The landing page: <code>https://chatappproject.herokuapp.com</code>, load a blank chat interface, simply because no user or recipient has been entered into the search query parameters of the URL. This is not an error.
