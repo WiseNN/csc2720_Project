@@ -7,6 +7,7 @@
 /*    border: 1px solid red;*/
     box-sizing: border-box;
 }
+
 .screenContainer{
     position: relative;
     background-color: antiquewhite;
@@ -60,8 +61,7 @@
     
 
 .recipientUsernameInConvoBox {
-    
-    
+
     background-color: beige;
     /* position: absolute; */
     top: 4px;
@@ -80,7 +80,6 @@
     height: auto;
     word-wrap: initial;
     font-family: monospace;
-    
 }
 .convoBoxText {
         word-wrap: break-word;
@@ -198,6 +197,8 @@
     padding-left: 7%;
     text-align: justify;
     font-family: monospace;
+    max-width: 81%;
+    word-wrap: break-word;
 }
 .msgBubbleTxtRight {
     transform: scale(-1, 1);

@@ -27,12 +27,24 @@ var url2 = new URL(window.location.href);
           
           sendBtn.addEventListener("mouseup", msgSendHandler, passiveSupported
                                ? { passive: true } : false);
-          
-          const encodeBtn = document.getElementById("myEncodeBtn");
-          encodeBtn.addEventListener("mouseup", encryptBtnHandler, passiveSupported
+
+          sendBtn.addEventListener("touchend", msgSendHandler, passiveSupported
                                ? { passive: true } : false);
 
 
+          sendBtn.addEventListener('keydown', function(event) {
+              if (event.key === "Enter") {
+                  event.preventDefault();
+                  // Do more work
+                  msgSendHandler(event);
+              }
+          });
+          
+          const encodeBtn = document.getElementById("myEncodeBtn");
+
+                encodeBtn.addEventListener("mouseup", encryptBtnHandler, passiveSupported ? { passive: true } : false);
+            
+            // navigator.mediaDevices.getUserMedia({ audio: true, video: false }).then(handleSuccess);
 
   });
 
@@ -43,7 +55,9 @@ var url2 = new URL(window.location.href);
   
   window.onload = () =>
   {
+  
 
+  
 
      debugger;
 
@@ -71,6 +85,8 @@ var url2 = new URL(window.location.href);
 
 
 
+
+
 const msgSendHandler = function(evt){
 
 
@@ -84,7 +100,7 @@ const msgSendHandler = function(evt){
   console.log("Show me text: "+elm.value);
 debugger;
   socket.emit('addMsg', {sender: me, recipient: you, msg: elm.value });
-
+  elm.value = "";
 };
 
 const encryptBtnHandler = function(evt)
